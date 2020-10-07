@@ -58,18 +58,29 @@ router.route("/:id")
                 return response.send(error);
             }
 
-            if (!request.user.roles.includes["TWITCH_BOT"] && !request.user.roles.includes["SUPER_USER"]) {
+            // if (!request.user.roles.includes("TWITCH_BOT") && !request.user.roles.includes("SUPER_USER")) {
                 // Check equipment/inventory changes to make sure that equipment is in inventory first.
                 let newUser = request.body;
-                let oldInventory = Object.keys(oldUser.equipment).map((slot) => {
-                    return oldUser.equipment[slot].id;
+                let oldInventory = Object.keys(oldUser.equipment)
+                .filter((slot) => {
+                    return oldUser.equipment[slot] && oldUser.equipment[slot].id;
                 })
+                .map((slot) => {
+                    return oldUser.equipment[slot].id;
+                });
                 oldInventory = [...oldInventory, ...oldUser.inventory];
 
-                let newInventory = Object.keys(newUser.equipment).map((slot) => {
-                    return newUser.equipment[slot].id;
+                let newInventory = Object.keys(newUser.equipment)
+                .filter((slot) => {
+                    return newUser.equipment[slot] && newUser.equipment[slot].id;
                 })
+                .map((slot) => {
+                    return newUser.equipment[slot].id;
+                });
                 newInventory = [...newInventory, ...newUser.inventory];
+
+                console.log("OLD: " + JSON.stringify(oldInventory, null, 5));
+                console.log("NEW: " + JSON.stringify(newInventory, null, 5));
 
                 newInventory.forEach((item) => {
                     if (!oldInventory.includes(item)) {
@@ -78,7 +89,7 @@ router.route("/:id")
                         return;
                     }
                 });
-            }
+            // }
     
             Users.updateOne({name: request.params.id}, request.body, (error, results) => {
                 if (error) {
