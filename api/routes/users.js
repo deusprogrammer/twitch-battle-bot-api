@@ -58,7 +58,7 @@ router.route("/:id")
                 return response.send(error);
             }
 
-            // if (!request.user.roles.includes("TWITCH_BOT") && !request.user.roles.includes("SUPER_USER")) {
+            if (!request.user.roles.includes("TWITCH_BOT") && !request.user.roles.includes("SUPER_USER")) {
                 // Check equipment/inventory changes to make sure that equipment is in inventory first.
                 let newUser = request.body;
                 let oldInventory = Object.keys(oldUser.equipment)
@@ -89,7 +89,7 @@ router.route("/:id")
                         return;
                     }
                 });
-            // }
+            }
     
             Users.updateOne({name: request.params.id}, request.body, (error, results) => {
                 if (error) {
