@@ -3,7 +3,11 @@ const items = require('./items')
 
 var userSchema = new mongoose.Schema({
     id: String,
-    name: String,
+    name: {
+        type: String,
+        required: "Name is required",
+        unique: true
+    },
     currentJob: {
         id: String
     },
