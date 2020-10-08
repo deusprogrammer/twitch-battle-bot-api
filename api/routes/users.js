@@ -23,13 +23,21 @@ router.route("/")
             return response.send("Insufficient privileges");
         }
 
-        Users.create(request.body, (error, results) => {
-            if (error) {
-                return response.send(error);
+        Users.findOne({name: request.body.name}, () => {
+            // Don't create if already created.
+            if (!error) {
+                return response.send();
             }
 
-            return response.json(results);
+            Users.create(request.body, (error, results) => {
+                if (error) {
+                    return response.send(error);
+                }
+    
+                return response.json(results);
+            });
         });
+
     });
 
 router.route("/:id")
