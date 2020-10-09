@@ -39,11 +39,11 @@ router.route("/:id")
         let userId = request.params.id;
 
         if (userId === "~self") {
-            userId = request.user.connected.twitch.userId;
+            userId = twitchUser;
         }
 
         let twitchUser = getAuthenticatedTwitchUserName(request);
-        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+        if (twitchUser !== userId && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
