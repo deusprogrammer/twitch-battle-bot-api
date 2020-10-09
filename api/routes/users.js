@@ -1,10 +1,12 @@
 import express from 'express'; 
 var router = express.Router();
 import Users from '../models/users';
+import {getAuthenticatedTwitchUserName, authenticatedUserHasRole} from '../utils/SecurityHelper';
 
 router.route("/")
     .get((request, response) => {
-        if (!request.user.connected && !request.user.connected.twitch && request.user.connected.twitch.userId !== request.params.id && !request.user.roles && !request.user.roles.includes("TWITCH_BOT")) {
+        let twitchUser = getAuthenticatedTwitchUserName(request);
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -34,15 +36,16 @@ router.route("/")
 
 router.route("/:id")
     .get((request, response) => {
-        if (!request.user.connected && !request.user.connected.twitch && request.user.connected.twitch.userId !== request.params.id && !request.user.roles && !request.user.roles.includes("TWITCH_BOT")) {
-            response.status(403);
-            return response.send("Insufficient privileges");
-        }
-
         let userId = request.params.id;
 
         if (userId === "~self") {
             userId = request.user.connected.twitch.userId;
+        }
+
+        let twitchUser = getAuthenticatedTwitchUserName(request);
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+            response.status(403);
+            return response.send("Insufficient privileges");
         }
 
         Users.findOne({name: request.params.id}, (error, results) => {
@@ -54,7 +57,8 @@ router.route("/:id")
         });
     })
     .put((request, response) => {
-        if (!request.user.connected && !request.user.connected.twitch && request.user.connected.twitch.userId !== request.params.id && !request.user.roles && !request.user.roles.includes("TWITCH_BOT")) {
+        let twitchUser = getAuthenticatedTwitchUserName(request);
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -64,7 +68,7 @@ router.route("/:id")
                 return response.send(error);
             }
 
-            if (!request.user.roles.includes("TWITCH_BOT") && !request.user.roles.includes("SUPER_USER")) {
+            if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
                 // Check equipment/inventory changes to make sure that equipment is in inventory first.
                 let newUser = request.body;
                 let oldInventory = Object.keys(oldUser.equipment)
@@ -107,7 +111,8 @@ router.route("/:id")
         })
     })
     .delete((request, response) => {
-        if (!request.user.connected && !request.user.connected.twitch && request.user.connected.twitch.userId !== request.params.id && !request.user.roles && !request.user.roles.includes("TWITCH_BOT")) {
+        let twitchUser = getAuthenticatedTwitchUserName(request);
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }

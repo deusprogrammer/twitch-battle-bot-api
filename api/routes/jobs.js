@@ -3,6 +3,8 @@ const { response } = require('express');
 var router = express.Router();
 var Jobs = require('../models/jobs');
 
+import {authenticatedUserHasRole} from '../utils/SecurityHelper';
+
 router.route("/")
     .get((request, response) => {
         Jobs.find({}, null, {sort: {type: 1, slot: 1, name: 1}}, (error, results) => {
@@ -14,7 +16,7 @@ router.route("/")
         });
     })
     .post((request, response) => {
-        if (!request.user.roles.includes["SUPER_USER"]) {
+        if (!authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -39,7 +41,7 @@ router.route("/:id")
         });
     })
     .put((request, response) => {
-        if (!request.user.roles.includes["SUPER_USER"]) {
+        if (!authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -53,7 +55,7 @@ router.route("/:id")
         });
     })
     .delete((request, response) => {
-        if (!request.user.roles.includes["SUPER_USER"]) {
+        if (!authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }

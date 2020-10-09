@@ -13,7 +13,7 @@ router.route("/")
         });
     })
     .post((request, response) => {
-        if (!request.user.roles.includes["SUPER_USER"]) {
+        if (!authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -38,7 +38,7 @@ router.route("/:id")
         });
     })
     .put((request, response) => {
-        if (!request.user.roles.includes["SUPER_USER"]) {
+        if (!authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -52,6 +52,11 @@ router.route("/:id")
         });
     })
     .delete((request, response) => {
+        if (!authenticatedUserHasRole(request, "SUPER_USER")) {
+            response.status(403);
+            return response.send("Insufficient privileges");
+        }
+
         Items.deleteOne({id: request.params.id}, (error, results) => {
             if (error) {
                 return response.send(error);
