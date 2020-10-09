@@ -4,7 +4,7 @@ import Users from '../models/users';
 
 router.route("/")
     .get((request, response) => {
-        if (!request.user.connected && !request.user.connected.twitch === !request.params.id && !request.user.roles.includes("TWITCH_BOT")) {
+        if (!request.user.connected && !request.user.connected.twitch && request.user.connected.twitch.userId !== !request.params.id && !request.user.roles.includes("TWITCH_BOT")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -34,9 +34,15 @@ router.route("/")
 
 router.route("/:id")
     .get((request, response) => {
-        if (!request.user.connected && !request.user.connected.twitch === !request.params.id && !request.user.roles.includes("TWITCH_BOT")) {
+        if (!request.user.connected && !request.user.connected.twitch && request.user.connected.twitch.userId !== !request.params.id && !request.user.roles.includes("TWITCH_BOT")) {
             response.status(403);
             return response.send("Insufficient privileges");
+        }
+
+        let userId = request.params.id;
+
+        if (userId === "~self") {
+            userId = request.user.connected.twitch.userId;
         }
 
         Users.findOne({name: request.params.id}, (error, results) => {
@@ -48,7 +54,7 @@ router.route("/:id")
         });
     })
     .put((request, response) => {
-        if (!request.user.connected && !request.user.connected.twitch === !request.params.id && !request.user.roles.includes("TWITCH_BOT")) {
+        if (!request.user.connected && !request.user.connected.twitch && request.user.connected.twitch.userId !== !request.params.id && !request.user.roles.includes("TWITCH_BOT")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -101,7 +107,7 @@ router.route("/:id")
         })
     })
     .delete((request, response) => {
-        if (!request.user.connected && !request.user.connected.twitch === !request.params.id && !request.user.roles.includes("TWITCH_BOT")) {
+        if (!request.user.connected && !request.user.connected.twitch && request.user.connected.twitch.userId !== !request.params.id && !request.user.roles.includes("TWITCH_BOT")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
