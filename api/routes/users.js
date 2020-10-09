@@ -38,6 +38,7 @@ router.route("/:id")
     .get((request, response) => {
         let userId = request.params.id;
         let twitchUser = getAuthenticatedTwitchUserName(request);
+
         if (userId === "~self") {
             userId = twitchUser;
         }
@@ -48,7 +49,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        Users.findOne({name: request.params.id}, (error, results) => {
+        Users.findOne({name: userId}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
