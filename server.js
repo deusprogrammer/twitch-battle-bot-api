@@ -9,6 +9,7 @@ var itemRoutes = require('./api/routes/items');
 var jobRoutes = require('./api/routes/jobs');
 var monsterRoutes = require('./api/routes/monsters');
 var encounterRoutes = require('./api/routes/encounters');
+var abilityRoutes = require('./api/routes/abilities');
 import {jwtAuthStrategy} from './api/config/passportConfig';
 
 let app = express();
@@ -47,6 +48,7 @@ app.use('/items', passport.authenticate("jwt", { session: false }), itemRoutes);
 app.use('/jobs', passport.authenticate("jwt", { session: false }), jobRoutes);
 app.use('/monsters', passport.authenticate("jwt", { session: false }), monsterRoutes);
 app.use('/encounters', passport.authenticate("jwt", { session: false }), encounterRoutes);
+app.use('/abilities', passport.authenticate("jwt", { session: false }), abilityRoutes);
 
 app.listen(port);
 console.log('budget RESTful API server started on: ' + port);
