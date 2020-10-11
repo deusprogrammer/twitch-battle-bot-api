@@ -14,7 +14,7 @@ var monsterSchema = new mongoose.Schema({
     int: Number,
     ac: Number,
     actions: {
-        type: List,
+        type: Array,
         of: {
             abilityId: String,
             chance: Number,
@@ -22,7 +22,7 @@ var monsterSchema = new mongoose.Schema({
         }
     },
     drops: {
-        type: List,
+        type: Array,
         of: {
             itemId: String,
             chance: Number,
