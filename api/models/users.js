@@ -1,5 +1,4 @@
 var mongoose = require('mongoose')
-const items = require('./items')
 
 var userSchema = new mongoose.Schema({
     id: String,

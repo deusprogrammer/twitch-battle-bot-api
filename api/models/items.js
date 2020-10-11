@@ -1,7 +1,11 @@
 var mongoose = require('mongoose')
 
 var itemSchema = new mongoose.Schema({
-    id: String,
+    id: {
+        type: String,
+        required: "Items must have an ID",
+        unique: true
+    },
     type: String,
     slot: String,
     name: String,

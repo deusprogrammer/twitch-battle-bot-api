@@ -1,7 +1,11 @@
 var mongoose = require('mongoose')
 
 var jobSchema = new mongoose.Schema({
-    id: String,
+    id: {
+        type: String,
+        required: "Jobs must have an ID",
+        unique: true
+    },
     hp: Number,
     mp: Number,
     str: Number,
