@@ -8,7 +8,6 @@ var monsterSchema = new mongoose.Schema({
     },
     name: String,
     hp: Number,
-    mp: Number,
     str: Number,
     dex: Number,
     int: Number,
