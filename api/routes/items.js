@@ -2,6 +2,8 @@ const express = require('express');
 var router = express.Router();
 var Items = require('../models/items');
 
+import {authenticatedUserHasRole} from '../utils/SecurityHelper';
+
 router.route("/")
     .get((request, response) => {
         Items.find({}, null, {sort: {type: 1, slot: 1, name: 1}}, (error, results) => {
