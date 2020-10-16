@@ -12,6 +12,7 @@ var itemSchema = new mongoose.Schema({
     use: String,
     dmg: String,
     mods: {
+        hp: Number,
         hit: Number,
         str: Number,
         dex: Number,

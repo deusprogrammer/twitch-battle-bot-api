@@ -7,7 +7,6 @@ var jobSchema = new mongoose.Schema({
         unique: true
     },
     hp: Number,
-    mp: Number,
     str: Number,
     dex: Number,
     int: Number,
