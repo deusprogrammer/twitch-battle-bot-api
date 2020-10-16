@@ -13,6 +13,7 @@ var monsterSchema = new mongoose.Schema({
     int: Number,
     ac: Number,
     dmg: String,
+    hit: Number,
     actions: {
         type: Array,
         of: {
