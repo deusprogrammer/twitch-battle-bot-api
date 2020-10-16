@@ -10,7 +10,8 @@ var jobSchema = new mongoose.Schema({
     mp: Number,
     str: Number,
     dex: Number,
-    int: Number
+    int: Number,
+    hit: Number
 })
 
 module.exports = mongoose.model("jobs", jobSchema)
