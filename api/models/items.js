@@ -11,6 +11,13 @@ var itemSchema = new mongoose.Schema({
     name: String,
     use: String,
     dmg: String,
+    mods: {
+        hit: Number,
+        str: Number,
+        dex: Number,
+        int: Number,
+        ac: Number
+    },
     ac: Number,
     value: Number
 })
