@@ -108,10 +108,10 @@ router.route("/:id")
                 // Check that gold value is balanced.
                 let oldInventoryValue = oldInventory.reduce((prev, curr) => {
                     return prev + curr.value;
-                }, 0) + gold;
+                }, 0) + oldUser.gold;
                 let newInventoryValue = newInventory.reduce((prev, curr) => {
                     return prev + curr.value;
-                }, 0) + gold;
+                }, 0) + newUser.gold;
 
                 if (oldInventoryValue !== newInventoryValue) {
                     response.status(400);
