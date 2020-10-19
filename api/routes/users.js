@@ -46,7 +46,6 @@ router.route("/:id")
 
         
         if (twitchUser !== userId && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
-            response.status(403);
             return response.send("Insufficient privileges");
         }
 
@@ -61,7 +60,6 @@ router.route("/:id")
     .put((request, response) => {
         let twitchUser = getAuthenticatedTwitchUserName(request);
         if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
-            response.status(403);
             return response.send("Insufficient privileges");
         }
 
@@ -100,7 +98,6 @@ router.route("/:id")
 
                 newInventory.forEach((item) => {
                     if (!oldInventory.includes(item)) {
-                        response.status(400);
                         response.send("You nasty cheater.");
                         return;
                     }
@@ -126,9 +123,7 @@ router.route("/:id")
                     }, 0) + newUser.gold;
 
                     if (oldInventoryValue !== newInventoryValue) {
-                        response.status(400);
-                        response.send("You nasty cheater.");
-                        return;
+                        return response.send("You nasty cheater.");
                     }
                 });
             }
