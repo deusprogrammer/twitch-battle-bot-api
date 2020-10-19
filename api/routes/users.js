@@ -125,16 +125,16 @@ router.route("/:id")
                     if (oldInventoryValue !== newInventoryValue) {
                         return response.send("You nasty cheater.");
                     }
+
+                    Users.updateOne({name: request.params.id}, newUser, (error, results) => {
+                        if (error) {
+                            return response.send(error);
+                        }
+            
+                        return response.json(results);
+                    });     
                 });
             }
-    
-            Users.updateOne({name: request.params.id}, newUser, (error, results) => {
-                if (error) {
-                    return response.send(error);
-                }
-    
-                return response.json(results);
-            });            
         })
     })
     .delete((request, response) => {
