@@ -5,7 +5,7 @@ import Items from '../models/items';
 import {getAuthenticatedTwitchUserName, authenticatedUserHasRole} from '../utils/SecurityHelper';
 
 router.route("/")
-    .get((request, response) => {
+    .get(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserName(request);
         if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
@@ -20,7 +20,7 @@ router.route("/")
             return response.json(results);
         });
     })
-    .post((request, response) => {
+    .post(async (request, response) => {
         if (!request.user.roles.includes("TWITCH_BOT")) {
             response.status(403);
             return response.send("Insufficient privileges");
@@ -36,7 +36,7 @@ router.route("/")
     });
 
 router.route("/:id")
-    .get((request, response) => {
+    .get(async (request, response) => {
         let userId = request.params.id;
         let twitchUser = getAuthenticatedTwitchUserName(request);
 
@@ -58,7 +58,7 @@ router.route("/:id")
             return response.json(results);
         });
     })
-    .put((request, response) => {
+    .put(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserName(request);
         if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
@@ -132,7 +132,7 @@ router.route("/:id")
             response.send(e);
         }
     })
-    .delete((request, response) => {
+    .delete(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserName(request);
         if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
             response.status(403);
