@@ -105,26 +105,31 @@ router.route("/:id")
                     }
                 });
 
-                // Check that gold value is balanced.
-                let oldInventoryValue = oldUser.inventory.reduce((prev, curr) => {
-                    console.log("PREV:  " + prev);
-                    console.log("VALUE: " + curr.value);
-                    return prev + curr.value;
-                }, 0) + oldUser.gold;
-                let newInventoryValue = newUser.inventory.reduce((prev, curr) => {
-                    console.log("PREV:  " + prev);
-                    console.log("VALUE: " + curr.value);
-                    return prev + curr.value;
-                }, 0) + newUser.gold;
+                // Need item table for next check
+                Items.find({}, null, {sort: {type: 1, slot: 1, name: 1}}, (error, items) => {
+                    if (error) {
+                        return response.send(error);
+                    }
 
-                console.log("OLD vs NEW: " + oldInventoryValue + "/" + newInventoryValue);
+                    var itemTable = {};
+                    items.forEach((item) => {
+                        itemTable[item.id] = item;
+                    })
+        
+                    // Check that gold value is balanced.
+                    let oldInventoryValue = oldUser.inventory.reduce((prev, curr) => {
+                        return prev + itemTable[curr].value;
+                    }, 0) + oldUser.gold;
+                    let newInventoryValue = newUser.inventory.reduce((prev, curr) => {
+                        return prev + itemTable[curr].value;
+                    }, 0) + newUser.gold;
 
-                if (oldInventoryValue !== newInventoryValue) {
-                    console.error("FUCK A CAMEL DICK");
-                    response.status(400);
-                    response.send("You nasty cheater.");
-                    return;
-                }
+                    if (oldInventoryValue !== newInventoryValue) {
+                        response.status(400);
+                        response.send("You nasty cheater.");
+                        return;
+                    }
+                });
             }
     
             Users.updateOne({name: request.params.id}, newUser, (error, results) => {
