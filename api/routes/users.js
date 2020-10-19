@@ -107,15 +107,20 @@ router.route("/:id")
 
                 // Check that gold value is balanced.
                 let oldInventoryValue = oldUser.inventory.reduce((prev, curr) => {
+                    console.log("PREV:  " + prev);
+                    console.log("VALUE: " + curr.value);
                     return prev + curr.value;
                 }, 0) + oldUser.gold;
                 let newInventoryValue = newUser.inventory.reduce((prev, curr) => {
+                    console.log("PREV:  " + prev);
+                    console.log("VALUE: " + curr.value);
                     return prev + curr.value;
                 }, 0) + newUser.gold;
 
                 console.log("OLD vs NEW: " + oldInventoryValue + "/" + newInventoryValue);
 
                 if (oldInventoryValue !== newInventoryValue) {
+                    console.error("FUCK A CAMEL DICK");
                     response.status(400);
                     response.send("You nasty cheater.");
                     return;
