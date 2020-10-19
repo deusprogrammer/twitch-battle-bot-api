@@ -116,6 +116,7 @@ router.route("/:id")
                 if (oldInventoryValue !== newInventoryValue) {
                     response.status(400);
                     response.send("You nasty cheater.");
+                    return;
                 }
             }
     
