@@ -46,6 +46,7 @@ router.route("/:id")
 
         
         if (twitchUser !== userId && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+            response.status(403);
             return response.send("Insufficient privileges");
         }
 
@@ -60,14 +61,12 @@ router.route("/:id")
     .put((request, response) => {
         let twitchUser = getAuthenticatedTwitchUserName(request);
         if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+            response.status(403);
             return response.send("Insufficient privileges");
         }
 
-        Users.findOne({name: request.params.id}, (error, oldUser) => {
-            if (error) {
-                return response.send(error);
-            }
-
+        try {
+            let oldUser = await Users.findOne({name: request.params.id}).exec();
             let newUser = request.body;
 
             if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
@@ -98,44 +97,40 @@ router.route("/:id")
 
                 newInventory.forEach((item) => {
                     if (!oldInventory.includes(item)) {
-                        response.send("You nasty cheater.");
-                        return;
+                        response.status(400);
+                        return response.send("You nasty cheater.");
                     }
                 });
 
                 // Need item table for next check
-                Items.find({}, null, {sort: {type: 1, slot: 1, name: 1}}, (error, items) => {
-                    if (error) {
-                        return response.send(error);
-                    }
+                let items = await Items.find({}, null, {sort: {type: 1, slot: 1, name: 1}}).exec();
 
-                    var itemTable = {};
-                    items.forEach((item) => {
-                        itemTable[item.id] = item;
-                    })
-        
-                    // Check that gold value is balanced.
-                    let oldInventoryValue = oldUser.inventory.reduce((prev, curr) => {
-                        return prev + itemTable[curr].value;
-                    }, 0) + oldUser.gold;
-                    let newInventoryValue = newUser.inventory.reduce((prev, curr) => {
-                        return prev + itemTable[curr].value;
-                    }, 0) + newUser.gold;
+                var itemTable = {};
+                items.forEach((item) => {
+                    itemTable[item.id] = item;
+                })
 
-                    if (oldInventoryValue !== newInventoryValue) {
-                        return response.send("You nasty cheater.");
-                    }
+                // Check that gold value is balanced.
+                let oldInventoryValue = oldUser.inventory.reduce((prev, curr) => {
+                    return prev + itemTable[curr].value;
+                }, 0) + oldUser.gold;
+                let newInventoryValue = newUser.inventory.reduce((prev, curr) => {
+                    return prev + itemTable[curr].value;
+                }, 0) + newUser.gold;
 
-                    Users.updateOne({name: request.params.id}, newUser, (error, results) => {
-                        if (error) {
-                            return response.send(error);
-                        }
-            
-                        return response.json(results);
-                    });     
-                });
+                if (oldInventoryValue !== newInventoryValue) {
+                    response.status(400);
+                    return response.send("You nasty cheater.");
+                }
+
+                await Users.updateOne({name: request.params.id}, newUser).exec();
+
+                return response.json(results);
             }
-        })
+        } catch (e) {
+            response.status(500);
+            response.send(e);
+        }
     })
     .delete((request, response) => {
         let twitchUser = getAuthenticatedTwitchUserName(request);
