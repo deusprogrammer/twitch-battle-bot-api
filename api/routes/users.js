@@ -69,9 +69,16 @@ router.route("/:id")
                 return response.send(error);
             }
 
+            let newUser = request.body;
+
             if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+                // Revert most fields to whatever is in the database.
+                newUser.id   = oldUser.id;
+                newUser.name = oldUser.name;
+                newUser.ap   = oldUser.ap;
+                newUser.hp   = oldUser.hp;
+
                 // Check equipment/inventory changes to make sure that equipment is in inventory first.
-                let newUser = request.body;
                 let oldInventory = Object.keys(oldUser.equipment)
                 .filter((slot) => {
                     return oldUser.equipment[slot] && oldUser.equipment[slot].id;
@@ -90,19 +97,29 @@ router.route("/:id")
                 });
                 newInventory = [...newInventory, ...newUser.inventory];
 
-                console.log("OLD: " + JSON.stringify(oldInventory, null, 5));
-                console.log("NEW: " + JSON.stringify(newInventory, null, 5));
-
                 newInventory.forEach((item) => {
                     if (!oldInventory.includes(item)) {
                         response.status(400);
-                        response.send("You nasty cheater");
+                        response.send("You nasty cheater.");
                         return;
                     }
                 });
+
+                // Check that gold value is balanced.
+                let oldInventoryValue = oldInventory.reduce((prev, curr) => {
+                    return prev + curr.value;
+                }, 0) + gold;
+                let newInventoryValue = newInventory.reduce((prev, curr) => {
+                    return prev + curr.value;
+                }, 0) + gold;
+
+                if (oldInventoryValue !== newInventoryValue) {
+                    response.status(400);
+                    response.send("You nasty cheater.");
+                }
             }
     
-            Users.updateOne({name: request.params.id}, request.body, (error, results) => {
+            Users.updateOne({name: request.params.id}, newUser, (error, results) => {
                 if (error) {
                     return response.send(error);
                 }

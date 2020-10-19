@@ -12,7 +12,6 @@ var userSchema = new mongoose.Schema({
     },
     ap: Number,
     hp: Number,
-    mp: Number,
     equipment: {
         hand: {
             id: String

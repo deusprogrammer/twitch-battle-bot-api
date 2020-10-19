@@ -6,6 +6,7 @@ var monsterSchema = new mongoose.Schema({
         required: "Monsters must have an ID",
         unique: true
     },
+    type: String,
     name: String,
     hp: Number,
     str: Number,
