@@ -1,6 +1,7 @@
 import express from 'express'; 
 var router = express.Router();
 import Users from '../models/users';
+import Items from '../models/items';
 import {getAuthenticatedTwitchUserName, authenticatedUserHasRole} from '../utils/SecurityHelper';
 
 router.route("/")
