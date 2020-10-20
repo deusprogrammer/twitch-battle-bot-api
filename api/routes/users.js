@@ -65,10 +65,11 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
+        let newUser = request.body;
+
         try {
             if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
                 let oldUser = await Users.findOne({name: request.params.id}).exec();
-                let newUser = request.body;
 
                 console.log("FOUND USERS");
 
@@ -132,6 +133,7 @@ router.route("/:id")
 
             return response.json(results);
         } catch (e) {
+            console.error("ERROR: " + e);
             response.status(500);
             return response.send(e);
         }
