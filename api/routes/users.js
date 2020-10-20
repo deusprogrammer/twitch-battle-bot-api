@@ -13,10 +13,10 @@ router.route("/")
         }
 
         try {
-            let results = Users.find({}, null, {sort: {name: 1}});
+            let results = await Users.find({}, null, {sort: {name: 1}}).exec();
             return response.json(results);
         } catch (e) {
-            console.error("ERROR IN GET ALL: " + e);
+            console.error("ERROR IN GET ALL: " + e.stack);
             response.status(500);
             return response.send(e);
         }
@@ -145,7 +145,7 @@ router.route("/:id")
         }
         
         try {
-            let results = await Users.deleteOne({name: request.params.id});
+            let results = await Users.deleteOne({name: request.params.id}).exec();
             return response.json(results);
         } catch (e) {
             console.error("ERROR IN DELETE: " + e);
