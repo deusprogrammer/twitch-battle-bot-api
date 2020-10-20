@@ -12,13 +12,14 @@ router.route("/")
             return response.send("Insufficient privileges");
         }
 
-        Users.find({}, null, {sort: {name: 1}}, (error, results) => {
-            if (error) {
-                return response.send(error);
-            }
-
+        try {
+            let results = Users.find({}, null, {sort: {name: 1}});
             return response.json(results);
-        });
+        } catch (e) {
+            console.error("ERROR: " + e);
+            response.status(500);
+            return response.send(e);
+        }
     })
     .post(async (request, response) => {
         if (!request.user.roles.includes("TWITCH_BOT")) {
@@ -26,13 +27,14 @@ router.route("/")
             return response.send("Insufficient privileges");
         }
 
-        Users.create(request.body, (error, results) => {
-            if (error) {
-                return response.send(error);
-            }
-
+        try {
+            let results = await Users.create(request.body).exec();
             return response.json(results);
-        });
+        } catch (e) {
+            console.error("ERROR: " + e);
+            response.status(500);
+            return response.send(e);
+        }
     });
 
 router.route("/:id")
@@ -50,13 +52,14 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        Users.findOne({name: userId}, (error, results) => {
-            if (error) {
-                return response.send(error);
-            }
-
+        try {
+            let results = await Users.findOne({name: userId}).exec();
             return response.json(results);
-        });
+        } catch (e) {
+            console.error("ERROR: " + e);
+            response.status(500);
+            return response.send(e);
+        }
     })
     .put(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserName(request);
@@ -98,8 +101,12 @@ router.route("/:id")
                 });
                 newInventory = [...newInventory, ...newUser.inventory];
 
+                console.log("OLD: " + JSON.stringify(oldInventory, null, 5));
+                console.log("NEW: " + JSON.stringify(newInventory, null, 5));
+
                 newInventory.forEach((item) => {
                     if (!oldInventory.includes(item)) {
+                        console.log("FOUND ITEM THAT WASN'T IN INVENTORY BEFORE!");
                         response.status(400);
                         return response.send("You nasty cheater.");
                     }
@@ -145,13 +152,14 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
         
-        Users.deleteOne({name: request.params.id}, (error, results) => {
-            if (error) {
-                return response.send(error);
-            }
-
+        try {
+            let results = await Users.deleteOne({name: request.params.id});
             return response.json(results);
-        });
+        } catch (e) {
+            console.error("ERROR: " + e);
+            response.status(500);
+            return response.send(e);
+        }
     });
 
 module.exports = router;

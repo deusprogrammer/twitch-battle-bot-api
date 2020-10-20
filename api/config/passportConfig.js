@@ -7,7 +7,6 @@ export let jwtAuthStrategy = new jwtStrategy({
     secretOrKey: authConfig.key,
     jwtFromRequest: extractJwt.fromAuthHeaderAsBearerToken()
 }, async (token, done) => {
-    console.log(`USER: ${JSON.stringify(token.user, null, 5)}`);
     try {
         return done(null, token.user);
     } catch (error) {
