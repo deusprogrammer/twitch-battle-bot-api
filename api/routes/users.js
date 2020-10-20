@@ -125,12 +125,12 @@ router.route("/:id")
                     response.status(400);
                     return response.send("You nasty cheater.");
                 }
-
-                let results = await Users.updateOne({name: request.params.id}, newUser).exec();
-                console.log("UPDATED USER");
-
-                return response.json(results);
             }
+
+            let results = await Users.updateOne({name: request.params.id}, newUser).exec();
+            console.log("UPDATED USER");
+
+            return response.json(results);
         } catch (e) {
             response.status(500);
             return response.send(e);
