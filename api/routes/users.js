@@ -66,10 +66,12 @@ router.route("/:id")
         }
 
         try {
-            let oldUser = await Users.findOne({name: request.params.id}).exec();
-            let newUser = request.body;
-
             if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+                let oldUser = await Users.findOne({name: request.params.id}).exec();
+                let newUser = request.body;
+
+                console.log("FOUND USERS");
+
                 // Revert most fields to whatever is in the database.
                 newUser.id   = oldUser.id;
                 newUser.name = oldUser.name;
@@ -104,6 +106,7 @@ router.route("/:id")
 
                 // Need item table for next check
                 let items = await Items.find({}, null, {sort: {type: 1, slot: 1, name: 1}}).exec();
+                console.log("FOUND ITEMS");
 
                 var itemTable = {};
                 items.forEach((item) => {
@@ -123,13 +126,14 @@ router.route("/:id")
                     return response.send("You nasty cheater.");
                 }
 
-                await Users.updateOne({name: request.params.id}, newUser).exec();
+                let results = await Users.updateOne({name: request.params.id}, newUser).exec();
+                console.log("UPDATED USER");
 
                 return response.json(results);
             }
         } catch (e) {
             response.status(500);
-            response.send(e);
+            return response.send(e);
         }
     })
     .delete(async (request, response) => {
