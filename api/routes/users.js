@@ -101,6 +101,9 @@ router.route("/:id")
 
                 newInventory.forEach((item) => {
                     if (!oldInventory.includes(item)) {
+                        console.error("User has item they shouldn't have.");
+                        console.log("OLD: " + JSON.stringify(oldInventory, null, 5));
+                        console.log("NEW: " + JSON.stringify(newInventory, null, 5));
                         response.status(400);
                         return response.send("You nasty cheater.");
                     }
@@ -123,6 +126,9 @@ router.route("/:id")
                 }, 0) + newUser.gold;
 
                 if (oldInventoryValue !== newInventoryValue) {
+                    console.error("User is trying to update gold incorrectly.");
+                    console.log("OLD: " + oldInventoryValue);
+                    console.log("NEW: " + newInventoryValue);
                     response.status(400);
                     return response.send("You nasty cheater.");
                 }
