@@ -16,7 +16,7 @@ router.route("/")
             let results = Users.find({}, null, {sort: {name: 1}});
             return response.json(results);
         } catch (e) {
-            console.error("ERROR: " + e);
+            console.error("ERROR IN GET ALL: " + e);
             response.status(500);
             return response.send(e);
         }
@@ -31,7 +31,7 @@ router.route("/")
             let results = await Users.create(request.body).exec();
             return response.json(results);
         } catch (e) {
-            console.error("ERROR: " + e);
+            console.error("ERROR IN CREATE: " + e.stack);
             response.status(500);
             return response.send(e);
         }
@@ -56,7 +56,7 @@ router.route("/:id")
             let results = await Users.findOne({name: userId}).exec();
             return response.json(results);
         } catch (e) {
-            console.error("ERROR: " + e);
+            console.error("ERROR IN GET ONE: " + e);
             response.status(500);
             return response.send(e);
         }
@@ -73,8 +73,6 @@ router.route("/:id")
         try {
             if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
                 let oldUser = await Users.findOne({name: request.params.id}).exec();
-
-                console.log("FOUND USERS");
 
                 // Revert most fields to whatever is in the database.
                 newUser.id   = oldUser.id;
@@ -101,12 +99,8 @@ router.route("/:id")
                 });
                 newInventory = [...newInventory, ...newUser.inventory];
 
-                console.log("OLD: " + JSON.stringify(oldInventory, null, 5));
-                console.log("NEW: " + JSON.stringify(newInventory, null, 5));
-
                 newInventory.forEach((item) => {
                     if (!oldInventory.includes(item)) {
-                        console.log("FOUND ITEM THAT WASN'T IN INVENTORY BEFORE!");
                         response.status(400);
                         return response.send("You nasty cheater.");
                     }
@@ -114,7 +108,6 @@ router.route("/:id")
 
                 // Need item table for next check
                 let items = await Items.find({}, null, {sort: {type: 1, slot: 1, name: 1}}).exec();
-                console.log("FOUND ITEMS");
 
                 var itemTable = {};
                 items.forEach((item) => {
@@ -136,11 +129,10 @@ router.route("/:id")
             }
 
             let results = await Users.updateOne({name: request.params.id}, newUser).exec();
-            console.log("UPDATED USER");
 
             return response.json(results);
         } catch (e) {
-            console.error("ERROR: " + e);
+            console.error("ERROR IN UPDATE: " + e.stack);
             response.status(500);
             return response.send(e);
         }
@@ -156,9 +148,9 @@ router.route("/:id")
             let results = await Users.deleteOne({name: request.params.id});
             return response.json(results);
         } catch (e) {
-            console.error("ERROR: " + e);
+            console.error("ERROR IN DELETE: " + e);
             response.status(500);
-            return response.send(e);
+            return response.send(e.stack);
         }
     });
 
