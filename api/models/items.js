@@ -42,6 +42,14 @@ var itemSchema = new mongoose.Schema({
         of: String,
         default: []
     },
+    skills: {
+        type: Array,
+        of: {
+            name: {type: String},
+            level: {type: Number}
+        },
+        default: []
+    },
     ac: Number,
     value: Number
 })
