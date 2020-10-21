@@ -12,12 +12,35 @@ var itemSchema = new mongoose.Schema({
     use: String,
     dmg: String,
     mods: {
-        hp: Number,
-        hit: Number,
-        str: Number,
-        dex: Number,
-        int: Number,
-        ac: Number
+        hp: {
+            type: Number,
+            default: 0
+        },
+        hit: {
+            type: Number,
+            default: 0
+        },
+        str: {
+            type: Number,
+            default: 0
+        },
+        dex: {
+            type: Number,
+            default: 0
+        },
+        int: {
+            type: Number,
+            default: 0
+        },
+        ac: {
+            type: Number,
+            default: 0
+        }
+    },
+    abilities: {
+        type: Array,
+        of: String,
+        default: []
     },
     ac: Number,
     value: Number
