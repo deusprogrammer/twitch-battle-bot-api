@@ -7,10 +7,40 @@ var abilitySchema = new mongoose.Schema({
         unique: true
     },
     name: String,
+    ap: {
+        type: Number,
+        default: 1
+    },
     dmg: String,
     target: String,
     area: String,
-    element: String
+    element: String,
+    mods: {
+        hp: {
+            type: Number,
+            default: 0
+        },
+        hit: {
+            type: Number,
+            default: 0
+        },
+        str: {
+            type: Number,
+            default: 0
+        },
+        dex: {
+            type: Number,
+            default: 0
+        },
+        int: {
+            type: Number,
+            default: 0
+        },
+        ac: {
+            type: Number,
+            default: 0
+        }
+    }
 })
 
 module.exports = mongoose.model("abilities", abilitySchema)
