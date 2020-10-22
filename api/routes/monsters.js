@@ -40,7 +40,7 @@ router.route("/:id")
         });
     })
     .put((request, response) => {
-        if (!authenticatedUserHasRole(request, "SUPER_USER")) {
+        if (!authenticatedUserHasRole(request, "SUPER_USER") && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
