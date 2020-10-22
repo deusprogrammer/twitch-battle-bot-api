@@ -51,7 +51,11 @@ var itemSchema = new mongoose.Schema({
         default: []
     },
     ac: Number,
-    value: Number
+    value: Number,
+    rarity: {
+        type: Number,
+        default: 1
+    }
 })
 
 module.exports = mongoose.model("items", itemSchema)

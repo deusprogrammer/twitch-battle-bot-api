@@ -30,6 +30,10 @@ var monsterSchema = new mongoose.Schema({
             chance: Number,
             onlyOne: Boolean
         }
+    },
+    rarity: {
+        type: Number,
+        default: 1
     }
 });
 
