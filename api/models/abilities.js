@@ -40,7 +40,9 @@ var abilitySchema = new mongoose.Schema({
             type: Number,
             default: 0
         }
-    }
+    },
+    buffs: String,
+    buffsDuration: Number
 })
 
 module.exports = mongoose.model("abilities", abilitySchema)
