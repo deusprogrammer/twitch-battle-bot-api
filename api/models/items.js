@@ -17,7 +17,7 @@ var itemSchema = new mongoose.Schema({
     },
     toHitStat: {
         type: String,
-        default: "STR"
+        default: "HIT"
     },
     mods: {
         hp: {
