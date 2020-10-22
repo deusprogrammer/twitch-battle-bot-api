@@ -28,7 +28,15 @@ var monsterSchema = new mongoose.Schema({
         of: {
             itemId: String,
             chance: Number,
-            onlyOne: Boolean
+            onlyOne: Boolean,
+            exclusive: {
+                type: Boolean,
+                default: false
+            },
+            exclusiveTaken: {
+                type: Boolean,
+                default: false
+            }
         }
     },
     rarity: {
