@@ -6,7 +6,7 @@ import {authenticatedUserHasRole} from '../utils/SecurityHelper';
 
 router.route("/")
     .get((request, response) => {
-        Monsters.find({}, null, {sort: {type: 1, slot: 1, name: 1}}, (error, results) => {
+        Monsters.find({}, null, {sort: {type: 1, rarity: 1, name: 1}}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
