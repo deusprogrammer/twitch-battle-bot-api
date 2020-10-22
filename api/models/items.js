@@ -11,6 +11,14 @@ var itemSchema = new mongoose.Schema({
     name: String,
     use: String,
     dmg: String,
+    dmgStat: {
+        type: String,
+        default: "HP"
+    },
+    toHitStat: {
+        type: String,
+        default: "STR"
+    },
     mods: {
         hp: {
             type: Number,
