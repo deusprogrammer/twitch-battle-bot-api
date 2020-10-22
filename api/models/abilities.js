@@ -12,8 +12,14 @@ var abilitySchema = new mongoose.Schema({
         default: 1
     },
     dmg: String,
-    dmgStat: String,
-    toHitStat: String,
+    dmgStat: {
+        type: String,
+        default: "HP"
+    },
+    toHitStat: {
+        type: String,
+        default: "HIT"
+    },
     target: String,
     area: String,
     element: String,
