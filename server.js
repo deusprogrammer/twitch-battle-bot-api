@@ -36,8 +36,16 @@ connectWithRetry();
 
 passport.use(jwtAuthStrategy);
 
+var corsOptions = {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT'],
+    allowedHeaders: ['Origin','X-Requested-With','X-Access-Token','contentType','Content-Type','Accept','Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200
+}
+
 app.use(bodyparser.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(passport.initialize());
 
 /*
