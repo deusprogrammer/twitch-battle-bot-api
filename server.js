@@ -16,8 +16,8 @@ let app = express();
 let port = process.env.PORT || 8080;
 
 // Mongoose instance connection url connection
-//const databaseUrl = process.env.DB_URL;
-const databaseUrl = "mongodb://10.0.0.244/battle-bot-db?retryWrites=true";
+const databaseUrl = process.env.DB_URL;
+//const databaseUrl = "mongodb://10.0.0.244/battle-bot-db?retryWrites=true";
 mongoose.Promise = global.Promise;
 
 /*
@@ -36,16 +36,8 @@ connectWithRetry();
 
 passport.use(jwtAuthStrategy);
 
-var corsOptions = {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT'],
-    allowedHeaders: ['Origin','X-Requested-With','X-Access-Token','contentType','Content-Type','Accept','Authorization'],
-    credentials: true,
-    optionsSuccessStatus: 200
-}
-
 app.use(bodyparser.json());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(passport.initialize());
 
 /*
