@@ -1,12 +1,12 @@
 const express = require('express');
 var router = express.Router();
-var Abilities = require('../models/abilities');
+var Statuses = require('../models/statuses');
 
 import {authenticatedUserHasRole} from '../utils/SecurityHelper';
 
 router.route("/")
     .get((request, response) => {
-        Abilities.find({}, null, {sort: {element: 1, target: 1, area: 1, ap: 1, name: 1}}, (error, results) => {
+        Statuses.find({}, null, {sort: {element: 1, name: 1}}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -20,7 +20,7 @@ router.route("/")
             return response.send("Insufficient privileges");
         }
 
-        Abilities.create(request.body, (error, results) => {
+        Statuses.create(request.body, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -31,7 +31,7 @@ router.route("/")
 
 router.route("/:id")
     .get((request, response) => {
-        Abilities.findOne({id: request.params.id}, (error, results) => {
+        Statuses.findOne({id: request.params.id}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -45,7 +45,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        Abilities.updateOne({id: request.params.id}, request.body, (error, results) => {
+        Statuses.updateOne({id: request.params.id}, request.body, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -59,7 +59,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        Abilities.deleteOne({id: request.params.id}, (error, results) => {
+        Statuses.deleteOne({id: request.params.id}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
