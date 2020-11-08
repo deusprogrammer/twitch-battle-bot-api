@@ -37,7 +37,7 @@ router.route("/")
     })
 
 router.route("/:id")
-    .get(async (request, response) => {
+    .get((request, response) => {
         SealedItems.findOne({id: request.params.id}, (error, results) => {
             if (error) {
                 return response.send(error);
@@ -46,12 +46,6 @@ router.route("/:id")
             // Null out the code if not the broadcaster or bot
             if (!authenticatedUserHasRole(request, "TWITCH_BROADCASTER") && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
                 results.code = null;
-            }
-            
-            // If the bot retrieves this, mark it claimed
-            if (authenticatedUserHasRole(request, "TWITCH_BOT")) {
-                results.claimed = true;
-                await SealedItems.update({id: results.id}, results);
             }
 
             return response.json(results);
