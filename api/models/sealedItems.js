@@ -10,7 +10,7 @@ var sealedItemSchema = new mongoose.Schema({
     description: String,
     code: String,
     claimed: {
-        type: String,
+        type: Boolean,
         default: false
     }
 })
