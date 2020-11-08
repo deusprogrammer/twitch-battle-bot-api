@@ -12,7 +12,8 @@ var sealedItemSchema = new mongoose.Schema({
     claimed: {
         type: Boolean,
         default: false
-    }
+    },
+    claimedBy: String
 })
 
 module.exports = mongoose.model("sealedItems", sealedItemSchema)
