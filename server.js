@@ -11,6 +11,7 @@ const monsterRoutes = require('./api/routes/monsters');
 const encounterRoutes = require('./api/routes/encounters');
 const abilityRoutes = require('./api/routes/abilities');
 const statusRoutes = require('./api/routes/statuses');
+const sealedItemRoutes = require('./api/routes/sealedItems');
 
 import {jwtAuthStrategy} from './api/config/passportConfig';
 
@@ -46,6 +47,7 @@ app.use(passport.initialize());
  */
 app.use('/users', passport.authenticate("jwt", { session: false }), usersRoutes);
 app.use('/items', passport.authenticate("jwt", { session: false }), itemRoutes);
+app.use('/sealed-items', passport.authenticate("jwt", { session: false }), sealedItemRoutes);
 app.use('/jobs', passport.authenticate("jwt", { session: false }), jobRoutes);
 app.use('/monsters', passport.authenticate("jwt", { session: false }), monsterRoutes);
 app.use('/encounters', passport.authenticate("jwt", { session: false }), encounterRoutes);

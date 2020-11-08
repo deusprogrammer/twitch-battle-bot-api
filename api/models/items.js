@@ -73,6 +73,7 @@ var itemSchema = new mongoose.Schema({
     },
     ac: Number,
     value: Number,
+    sealedItemId: String,
     rarity: {
         type: Number,
         default: 1
