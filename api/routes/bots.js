@@ -26,8 +26,12 @@ router.route("/")
         }
     })
     .post(async (request, response) => {
+        let twitchUser = getAuthenticatedTwitchUserId(request);
+        
         try {
             request.body.sharedSecretKey = randomUuid();
+            request.body.twitchChannelId = twitchUser;
+            request.body.twitchOwnerUserId = twitchUser;
             let bot = await Bots.create(request.body);
             return response.json(bot);
         } catch (error) {
