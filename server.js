@@ -11,6 +11,7 @@ const monsterRoutes = require('./api/routes/monsters');
 const encounterRoutes = require('./api/routes/encounters');
 const abilityRoutes = require('./api/routes/abilities');
 const statusRoutes = require('./api/routes/statuses');
+const botRoutes = require('./api/routes/bots');
 const sealedItemRoutes = require('./api/routes/sealedItems');
 
 import {jwtAuthStrategy} from './api/config/passportConfig';
@@ -53,6 +54,7 @@ app.use('/monsters', passport.authenticate("jwt", { session: false }), monsterRo
 app.use('/encounters', passport.authenticate("jwt", { session: false }), encounterRoutes);
 app.use('/abilities', passport.authenticate("jwt", { session: false }), abilityRoutes);
 app.use('/statuses', passport.authenticate("jwt", { session: false }), statusRoutes);
+app.use('/bots', passport.authenticate("jwt", { session: false }), botRoutes);
 
 app.listen(port);
 console.log('budget RESTful API server started on: ' + port);
