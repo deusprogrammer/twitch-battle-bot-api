@@ -20,6 +20,7 @@ router.route("/")
 
             return response.json(bots);
         } catch (error) {
+            console.error(error);
             response.status(500);
             return response.send(error);
         }
@@ -30,6 +31,7 @@ router.route("/")
             let bot = await Bots.create(request.body).exec();
             return response.json(bot);
         } catch (error) {
+            console.error(error);
             response.status(500);
             return response.send(error);
         }
@@ -47,6 +49,7 @@ router.route("/:id")
             let bot = await Bots.findOne({twitchChannelId: request.params.id}).exec();
             return response.json(bot);
         } catch (error) {
+            console.error(error);
             response.status(500);
             return response.send(error);
         }
@@ -62,6 +65,7 @@ router.route("/:id")
             let bot = await Bots.updateOne({twitchChannelId: request.params.id}, request.body).exec();
             return response.json(bot);
         } catch (error) {
+            console.error(error);
             response.status(500);
             return response.send(error);
         }
@@ -77,6 +81,7 @@ router.route("/:id")
             let bot = await Bots.deleteOne({twitchChannelId: request.params.id}).exec();
             return response.json(bot);
         } catch (error) {
+            console.error(error);
             response.status(500);
             return response.send(error);
         }
