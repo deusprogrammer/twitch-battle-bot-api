@@ -4,6 +4,10 @@ var Bots = require('../models/bots');
 
 import {authenticatedUserHasRole, getAuthenticatedTwitchUserId} from '../utils/SecurityHelper';
 
+const randomUuid = () => {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
 router.route("/")
     .get(async (request, response) => {
         try {
@@ -22,6 +26,7 @@ router.route("/")
     })
     .post(async (request, response) => {
         try {
+            request.body.sharedSecretKey = randomUuid();
             let bot = await Bots.create(request.body).exec();
             return response.json(bot);
         } catch (error) {
