@@ -28,7 +28,7 @@ router.route("/")
     .post(async (request, response) => {
         try {
             request.body.sharedSecretKey = randomUuid();
-            let bot = await Bots.create(request.body).exec();
+            let bot = await Bots.create(request.body);
             return response.json(bot);
         } catch (error) {
             console.error(error);
@@ -62,7 +62,7 @@ router.route("/:id")
         }
 
         try {
-            let bot = await Bots.updateOne({twitchChannelId: request.params.id}, request.body).exec();
+            let bot = await Bots.updateOne({twitchChannelId: request.params.id}, request.body);
             return response.json(bot);
         } catch (error) {
             console.error(error);
