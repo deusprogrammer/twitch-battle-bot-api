@@ -81,7 +81,7 @@ var itemSchema = new mongoose.Schema({
     owningChannel: {
         type: Number,
         required: "An owning channel is required",
-        default: 88666502
+        index: true
     }
 })
 

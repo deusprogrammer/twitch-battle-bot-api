@@ -6,15 +6,6 @@ import {authenticatedUserHasRole, authenticatedUserHasAccessToChannel} from '../
 
 router.route("/")
     .get((request, response) => {
-        let search = {};
-        if (request.query.channelId) {
-            search.owningChannel = parseInt(request.query.channelId);
-        }
-
-        if (request.query.type) {
-            search.type = request.query.type;
-        }
-
         Items.find(request.query, null, {sort: {type: 1, slot: 1, rarity: 1, name: 1}}, (error, results) => {
             if (error) {
                 return response.send(error);
