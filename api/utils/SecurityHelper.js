@@ -21,3 +21,11 @@ export let authenticatedUserHasRole = (request, role) => {
     
     return false;
 }
+
+export let authenticatedUserHasAccessToChannel = (request, channelId) => {
+    if (request.user && request.user.connected && request.user.connected.twitch) {
+        return request.user.connected.twitch.channels.includes(channelId);
+    }
+    
+    return false;
+}

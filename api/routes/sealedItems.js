@@ -6,7 +6,12 @@ import {authenticatedUserHasRole} from '../utils/SecurityHelper';
 
 router.route("/")
     .get((request, response) => {
-        SealedItems.find({}, null, {sort: {name: 1}}, (error, results) => {
+        let search = {};
+        if (request.query.channelId) {
+            search.owningChannel = request.query.channelId;
+        }
+
+        SealedItems.find(search, null, {sort: {name: 1}}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -27,6 +32,11 @@ router.route("/")
             return response.send("Insufficient privileges");
         }
 
+        if (!authenticatedUserHasAccessToChannel(request.body.owningChannel)) {
+            response.status(403);
+            return response.send("Authenticated user doesn't have access to this channel's assets.")
+        }
+
         SealedItems.create(request.body, (error, results) => {
             if (error) {
                 return response.send(error);
@@ -38,7 +48,12 @@ router.route("/")
 
 router.route("/:id")
     .get((request, response) => {
-        SealedItems.findOne({id: request.params.id}, (error, results) => {
+        let search = {id: request.params.id};
+        if (request.query.channelId) {
+            search.owningChannel = request.query.channelId;
+        }
+
+        SealedItems.findOne(search, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -57,7 +72,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        SealedItems.updateOne({id: request.params.id}, request.body, (error, results) => {
+        SealedItems.updateOne({id: request.params.id, owningChannel: results.owningChannel}, request.body, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -71,7 +86,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        SealedItems.deleteOne({id: request.params.id}, (error, results) => {
+        SealedItems.deleteOne({id: request.params.id, owningChannel: results.owningChannel}, (error, results) => {
             if (error) {
                 return response.send(error);
             }

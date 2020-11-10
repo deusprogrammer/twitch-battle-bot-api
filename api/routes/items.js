@@ -6,7 +6,12 @@ import {authenticatedUserHasRole} from '../utils/SecurityHelper';
 
 router.route("/")
     .get((request, response) => {
-        Items.find({}, null, {sort: {type: 1, slot: 1, rarity: 1, name: 1}}, (error, results) => {
+        let search = {};
+        if (request.query.channelId) {
+            search.owningChannel = request.query.channelId;
+        }
+
+        Items.find(search, null, {sort: {type: 1, slot: 1, rarity: 1, name: 1}}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -20,6 +25,11 @@ router.route("/")
             return response.send("Insufficient privileges");
         }
 
+        if (!authenticatedUserHasAccessToChannel(request.body.owningChannel)) {
+            response.status(403);
+            return response.send("Authenticated user doesn't have access to this channel's assets.")
+        }
+
         Items.create(request.body, (error, results) => {
             if (error) {
                 return response.send(error);
@@ -31,7 +41,12 @@ router.route("/")
 
 router.route("/:id")
     .get((request, response) => {
-        Items.findOne({id: request.params.id}, (error, results) => {
+        let search = {id: request.params.id};
+        if (request.query.channelId) {
+            search.owningChannel = request.query.channelId;
+        }
+
+        Items.findOne(search, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -45,7 +60,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
         
-        Items.updateOne({id: request.params.id}, request.body, (error, results) => {
+        Items.updateOne({id: request.params.id, owningChannel: results.owningChannel}, request.body, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -59,7 +74,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        Items.deleteOne({id: request.params.id}, (error, results) => {
+        Items.deleteOne({id: request.params.id, owningChannel: results.owningChannel}, (error, results) => {
             if (error) {
                 return response.send(error);
             }

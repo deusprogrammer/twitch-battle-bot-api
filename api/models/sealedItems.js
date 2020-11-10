@@ -13,7 +13,12 @@ var sealedItemSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    claimedBy: String
+    claimedBy: String,
+    owningChannel: {
+        type: Number,
+        required: "An owning channel is required",
+        default: 88666502
+    }
 })
 
 module.exports = mongoose.model("sealedItems", sealedItemSchema)

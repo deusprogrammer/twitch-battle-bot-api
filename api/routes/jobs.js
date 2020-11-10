@@ -7,7 +7,12 @@ import {authenticatedUserHasRole} from '../utils/SecurityHelper';
 
 router.route("/")
     .get((request, response) => {
-        Jobs.find({}, null, {sort: {type: 1, slot: 1, name: 1}}, (error, results) => {
+        let search = {};
+        if (request.query.channelId) {
+            search.owningChannel = request.query.channelId;
+        }
+
+        Jobs.find(search, null, {sort: {type: 1, slot: 1, name: 1}}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -21,6 +26,11 @@ router.route("/")
             return response.send("Insufficient privileges");
         }
 
+        if (!authenticatedUserHasAccessToChannel(request.body.owningChannel)) {
+            response.status(403);
+            return response.send("Authenticated user doesn't have access to this channel's assets.")
+        }
+
         Jobs.create(request.body, (error, results) => {
             if (error) {
                 return response.send(error);
@@ -32,7 +42,12 @@ router.route("/")
 
 router.route("/:id")
     .get((request, response) => {
-        Jobs.findOne({id: request.params.id}, (error, results) => {
+        let search = {id: request.params.id};
+        if (request.query.channelId) {
+            search.owningChannel = request.query.channelId;
+        }
+
+        Jobs.findOne(search, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -46,7 +61,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        Jobs.updateOne({id: request.params.id}, request.body, (error, results) => {
+        Jobs.updateOne({id: request.params.id, owningChannel: results.owningChannel}, request.body, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -60,7 +75,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        Jobs.deleteOne({id: request.params.id}, (error, results) => {
+        Jobs.deleteOne({id: request.params.id, owningChannel: results.owningChannel}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
