@@ -2,16 +2,11 @@ const express = require('express');
 var router = express.Router();
 var Statuses = require('../models/statuses');
 
-import {authenticatedUserHasRole} from '../utils/SecurityHelper';
+import {authenticatedUserHasRole, authenticatedUserHasAccessToChannel} from '../utils/SecurityHelper';
 
 router.route("/")
     .get((request, response) => {
-        let search = {};
-        if (request.query.channelId) {
-            search.owningChannel = request.query.channelId;
-        }
-
-        Statuses.find(search, null, {sort: {element: 1, name: 1}}, (error, results) => {
+        Statuses.find(request.query, null, {sort: {element: 1, name: 1}}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -25,7 +20,7 @@ router.route("/")
             return response.send("Insufficient privileges");
         }
 
-        if (!authenticatedUserHasAccessToChannel(request.body.owningChannel)) {
+        if (!authenticatedUserHasAccessToChannel(request, request.body.owningChannel)) {
             response.status(403);
             return response.send("Authenticated user doesn't have access to this channel's assets.")
         }
@@ -42,8 +37,8 @@ router.route("/")
 router.route("/:id")
     .get((request, response) => {
         let search = {id: request.params.id};
-        if (request.query.channelId) {
-            search.owningChannel = request.query.channelId;
+        if (request.query.owningChannel) {
+            search.owningChannel = request.query.owningChannel;
         }
 
         Statuses.findOne(search, (error, results) => {
@@ -60,7 +55,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        Statuses.updateOne({id: request.params.id, owningChannel: results.owningChannel}, request.body, (error, results) => {
+        Statuses.updateOne({id: request.params.id}, request.body, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -74,7 +69,7 @@ router.route("/:id")
             return response.send("Insufficient privileges");
         }
 
-        Statuses.deleteOne({id: request.params.id, owningChannel: results.owningChannel}, (error, results) => {
+        Statuses.deleteOne({id: request.params.id}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
