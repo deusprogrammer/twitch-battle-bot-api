@@ -26,7 +26,7 @@ export let authenticatedUserHasAccessToChannel = (request, channelId) => {
     console.log("USER: " + JSON.stringify(request.user));
     console.log("CHANNEL ID: " + channelId);
     if (request.user && request.user.connected && request.user.connected.twitch) {
-        return request.user.connected.twitch.channels.includes(`${channelId}`);
+        return request.user.connected.twitch.channels.includes(channelId.toString());
     }
     
     return false;
