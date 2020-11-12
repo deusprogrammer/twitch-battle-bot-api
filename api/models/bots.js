@@ -1,6 +1,11 @@
 var mongoose = require('mongoose')
 
 var botSchema = new mongoose.Schema({
+    twitchChannel: {
+        type: String,
+        required: 'Channel name is required',
+        unique: true
+    },
     twitchChannelId: {
         type: Number,
         required: 'Channel id is required',
@@ -16,6 +21,9 @@ var botSchema = new mongoose.Schema({
         required: 'Shared secret key is required'
     },
     accessToken: {
+        type: String
+    },
+    refreshToken: {
         type: String
     },
     priority: {

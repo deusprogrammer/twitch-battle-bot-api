@@ -2,10 +2,31 @@ const express = require('express');
 var router = express.Router();
 var Bots = require('../models/bots');
 
+import axios from 'axios';
+
 import {authenticatedUserHasRole, getAuthenticatedTwitchUserId} from '../utils/SecurityHelper';
+
+const clientId = process.env.TWITCH_CLIENT_ID;
+const clientSecret = process.env.TWITCH_CLIENT_SECRET;
 
 const randomUuid = () => {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+const validateAccessToken = async (accessToken) => {
+    let res = await axios.get(`https://id.twitch.tv/oauth2/validate`, {
+        headers: {
+            "Authorization": `Bearer ${accessToken}`
+        }
+    });
+
+    return res.data;
+}
+
+const refreshAccessToken = async (refreshToken) => {
+    let res = await axios.post(`https://id.twitch.tv/oauth2/token--data-urlencode?grant_type=refresh_token&refresh_token=${encodeURIComponent(refreshToken)}&client_id=${clientId}&client_secret=${clientSecret}`);
+
+    return res.data;
 }
 
 router.route("/")
@@ -51,6 +72,17 @@ router.route("/:id")
 
         try {
             let bot = await Bots.findOne({twitchChannelId: request.params.id}).exec();
+
+            // Check auth token
+            try {
+                await validateAccessToken(bot.accessToken);
+            } catch (error) {
+                // Refresh token on failure to validate
+                let refresh = await refreshAccessToken(bot.refreshToken);
+                bot.accessToken = refresh.access_token;
+                await Bots.findByIdAndUpdate(bot._id, bot);
+            }
+            
             return response.json(bot);
         } catch (error) {
             console.error(error);
