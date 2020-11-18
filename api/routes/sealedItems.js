@@ -57,12 +57,12 @@ router.route("/:id")
         });
     })
     .put((request, response) => {
-        if (!authenticatedUserHasRole(request, "TWITCH_ADMIN") && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_BROADCASTER")) {
+        if (!authenticatedUserHasAccessToChannel(request, request.body.owningChannel) && !authenticatedUserHasRole(request, "TWITCH_ADMIN") && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
 
-        SealedItems.updateOne({id: request.params.id}, request.body, (error, results) => {
+        SealedItems.updateOne({id: request.params.id, owningChannel: request.body.owningChannel}, request.body, (error, results) => {
             if (error) {
                 return response.send(error);
             }
@@ -71,9 +71,11 @@ router.route("/:id")
         });
     })
     .delete((request, response) => {
-        if (!authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
+        let sealedItem = await SealedItems.findOne({id: request.params.id}).exec();
+
+        if (!authenticatedUserHasAccessToChannel(request, sealedItem.owningChannel) && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
-            return response.send("Insufficient privileges");
+            return response.send("Authenticated user doesn't have access to this channel's assets.")
         }
 
         SealedItems.deleteOne({id: request.params.id}, (error, results) => {
