@@ -29,6 +29,23 @@ const refreshAccessToken = async (refreshToken) => {
     return res.data;
 }
 
+const getContainer = async (containerName) => {
+    let res = await axios.get(`http://10.0.0.243:2375/containers/${containerName}/json`);
+
+    return res.data;
+}
+
+const isContainerRunning = async (containerName) => {
+    let container = await getContainer(containerName);
+    return container.State.Running
+}
+
+const changeContainerState = async (containerName, state) => {
+    let res = await axios.post(`http://10.0.0.243:2375/containers/${containerName}/${state}`);
+
+    return res.data;
+}
+
 router.route("/")
     .get(async (request, response) => {
         try {
@@ -65,7 +82,7 @@ router.route("/")
 router.route("/:id")
     .get(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserId(request);
-        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "SUPER_USER") && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN") && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -92,7 +109,7 @@ router.route("/:id")
     })
     .put(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserId(request);
-        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "SUPER_USER")) {
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -108,7 +125,7 @@ router.route("/:id")
     })
     .delete(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserId(request);
-        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "SUPER_USER")) {
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -121,6 +138,68 @@ router.route("/:id")
             response.status(500);
             return response.send(error);
         }
+    })
+
+router.route("/:id/state")
+    .get(async (request, response) => {
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
+            response.status(403);
+            return response.send("Insufficient privileges");
+        }
+
+        try {
+            let containerRunning = await isContainerRunning(`cbd-bot-${request.params.id}`);
+
+            response.json(
+                {
+                    created: true,
+                    running: containerRunning
+                }
+            )
+            return;
+        } catch (error) {
+            if (error.response && error.response.state === 404) {
+                response.json(
+                    {
+                        created: false,
+                        running: false
+                    }
+                );
+                return;
+            } else {
+                response.status(500);
+                response.send(error);
+                return;
+            }
+        }
+    })
+    .put(async (request, response) => {
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
+            response.status(403);
+            return response.send("Insufficient privileges");
+        }
+        
+        try {
+            let containerRunning = await isContainerRunning(`cbd-bot-${request.params.id}`);
+
+            if (containerRunning && request.body.newState === "start") {
+                response.status(400);
+                response.send("Container already running");
+                return;
+            }
+
+            await changeContainerState(`bot-${request.params.id}`);
+            return;
+        } catch (error) {
+            if (error.response && error.response.state === 404) {
+                response.status(404);
+                response.send(error);
+                return;
+            } else {
+                response.status(500);
+                response.send(error);
+                return;
+            }
     })
 
 module.exports = router;

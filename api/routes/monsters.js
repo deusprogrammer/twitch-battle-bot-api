@@ -15,7 +15,7 @@ router.route("/")
         });
     })
     .post((request, response) => {
-        if (!authenticatedUserHasRole(request, "SUPER_USER")) {
+        if (!authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -50,7 +50,7 @@ router.route("/:id")
         });
     })
     .put((request, response) => {
-        if (!authenticatedUserHasRole(request, "SUPER_USER") && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
+        if (!authenticatedUserHasRole(request, "TWITCH_ADMIN") && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -64,7 +64,7 @@ router.route("/:id")
         });
     })
     .delete((request, response) => {
-        if (!authenticatedUserHasRole(request, "SUPER_USER")) {
+        if (!authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }

@@ -7,7 +7,7 @@ import {getAuthenticatedTwitchUserName, authenticatedUserHasRole} from '../utils
 router.route("/")
     .get(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserName(request);
-        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -47,7 +47,7 @@ router.route("/:id")
         }
 
         
-        if (twitchUser !== userId && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+        if (twitchUser !== userId && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -63,7 +63,7 @@ router.route("/:id")
     })
     .put(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserName(request);
-        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
@@ -71,7 +71,7 @@ router.route("/:id")
         let newUser = request.body;
 
         try {
-            if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+            if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
                 let oldUser = await Users.findOne({name: request.params.id}).exec();
 
                 // Revert most fields to whatever is in the database.
@@ -145,7 +145,7 @@ router.route("/:id")
     })
     .delete(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserName(request);
-        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "SUPER_USER")) {
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Insufficient privileges");
         }
