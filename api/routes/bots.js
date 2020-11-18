@@ -200,6 +200,7 @@ router.route("/:id/state")
                 response.send(error);
                 return;
             }
+        }
     })
 
 module.exports = router;
