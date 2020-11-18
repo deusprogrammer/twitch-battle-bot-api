@@ -142,6 +142,7 @@ router.route("/:id")
 
 router.route("/:id/state")
     .get(async (request, response) => {
+        let twitchUser = getAuthenticatedTwitchUserId(request);
         if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Insufficient privileges");
@@ -150,30 +151,28 @@ router.route("/:id/state")
         try {
             let containerRunning = await isContainerRunning(`cbd-bot-${request.params.id}`);
 
-            response.json(
+            return response.json(
                 {
                     created: true,
                     running: containerRunning
                 }
             )
-            return;
         } catch (error) {
             if (error.response && error.response.state === 404) {
-                response.json(
+                return response.json(
                     {
                         created: false,
                         running: false
                     }
                 );
-                return;
             } else {
                 response.status(500);
-                response.send(error);
-                return;
+                return response.send(error);
             }
         }
     })
     .put(async (request, response) => {
+        let twitchUser = getAuthenticatedTwitchUserId(request);
         if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Insufficient privileges");
@@ -184,21 +183,18 @@ router.route("/:id/state")
 
             if (containerRunning && request.body.newState === "start") {
                 response.status(400);
-                response.send("Container already running");
-                return;
+                return response.send("Container already running");
             }
 
             await changeContainerState(`bot-${request.params.id}`);
-            return;
+            return response.send();
         } catch (error) {
             if (error.response && error.response.state === 404) {
                 response.status(404);
-                response.send(error);
-                return;
+                return response.send(error);
             } else {
                 response.status(500);
-                response.send(error);
-                return;
+                return response.send(error);
             }
         }
     })
