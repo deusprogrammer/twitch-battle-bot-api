@@ -15,12 +15,7 @@ router.route("/")
         });
     })
     .post((request, response) => {
-        if (!authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
-            response.status(403);
-            return response.send("Insufficient privileges");
-        }
-
-        if (!authenticatedUserHasAccessToChannel(request, request.body.owningChannel)) {
+        if (!authenticatedUserHasAccessToChannel(request, request.body.owningChannel) && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
             return response.send("Authenticated user doesn't have access to this channel's assets.")
         }
