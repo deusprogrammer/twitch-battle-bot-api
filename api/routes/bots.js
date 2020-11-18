@@ -186,7 +186,7 @@ router.route("/:id/state")
                 return response.send("Container already running");
             }
 
-            await changeContainerState(`bot-${request.params.id}`);
+            await changeContainerState(`cbd-bot-${request.params.id}`);
             return response.send();
         } catch (error) {
             if (error.response && error.response.state === 404) {
