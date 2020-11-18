@@ -58,10 +58,12 @@ router.route("/:id")
             return response.json(results);
         });
     })
-    .delete((request, response) => {
-        if (!authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
+    .delete(async (request, response) => {
+        let encounter = await Items.findOne({id: request.params.id}).exec();
+
+        if (!authenticatedUserHasAccessToChannel(request, encounter.owningChannel) && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
-            return response.send("Insufficient privileges");
+            return response.send("Authenticated user doesn't have access to this channel's assets.")
         }
 
         Items.deleteOne({id: request.params.id}, (error, results) => {

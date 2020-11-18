@@ -58,7 +58,7 @@ router.route("/:id")
             return response.json(results);
         });
     })
-    .delete((request, response) => {
+    .delete(async (request, response) => {
         let monster = await Monsters.findOne({id: request.params.id}).exec();
 
         if (!authenticatedUserHasAccessToChannel(request, monster.owningChannel) && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
