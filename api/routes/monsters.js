@@ -45,7 +45,7 @@ router.route("/:id")
         });
     })
     .put((request, response) => {
-        if (!authenticatedUserHasAccessToChannel(request, request.body.owningChannel) && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
+        if (!authenticatedUserHasAccessToChannel(request, request.body.owningChannel) && !authenticatedUserHasRole(request, "TWITCH_ADMIN") && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
             response.status(403);
             return response.send("Authenticated user doesn't have access to this channel's assets.")
         }
