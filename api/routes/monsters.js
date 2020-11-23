@@ -6,7 +6,7 @@ import {authenticatedUserHasRole, authenticatedUserHasAccessToChannel} from '../
 
 router.route("/")
     .get((request, response) => {
-        Monsters.find(request.query, null, {sort: {type: 1, rarity: 1, dungeon: 1, name: 1}}, (error, results) => {
+        Monsters.find(request.query, null, {dungeon: 1, sort: {type: 1, rarity: 1, name: 1}}, (error, results) => {
             if (error) {
                 return response.send(error);
             }
