@@ -186,8 +186,15 @@ router.route("/:id/token")
             return response.send("Invalid user");
         }
 
-        let bot = await Bots.findOne({twitchChannelId: request.params.id}).exec();
-        await Bots.findByIdAndUpdate(bot._id, bot);
+        try {
+            await Bots.findOneAndUpdate({twitchChannelId: request.params.id}, bot);
+            response.status(204);
+            return response.send();
+        } catch (error) {
+            console.error(error);
+            response.status(500);
+            return response.send(error);
+        }
     })
     .get(async (request, response) => {
         let bot = await Bots.findOne({twitchChannelId: request.params.id}).exec();
