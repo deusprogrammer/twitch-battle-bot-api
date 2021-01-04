@@ -16,7 +16,9 @@ const randomUuid = () => {
 
 const getAccessToken = async (code) => {
     try {
-        let res = await axios.post(`https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&code=${code}&grant_type=authorization_code&redirect_uri=${redirectUrl}`);
+        let url = `https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&code=${code}&grant_type=authorization_code&redirect_uri=${redirectUrl}`;
+        console.log("CONTACTING: " + url);
+        let res = await axios.post(url);
 
         return res.data;
     } catch (error) {
@@ -170,23 +172,23 @@ router.route("/:id")
 
 router.route("/:id/token")
     .put(async (request, response) => {
-        // Get access token.
-        let accessTokenRes = await getAccessToken(request.body.twitchAuthCode);
-
-        // Get user profile.
-        let userRes = await getProfile(accessTokenRes.access_token);
-
-        // Get approved bots.
-        let profile = userRes.data[0];
-        let twitchUser = getAuthenticatedTwitchUserId(request);
-
-        // Validate that the token being updated is owned by channel
-        if (twitchUser !== request.params.id || profile.id !== request.params.id) {
-            response.status(403);
-            return response.send("Invalid user");
-        }
-
         try {
+            // Get access token.
+            let accessTokenRes = await getAccessToken(request.body.twitchAuthCode);
+
+            // Get user profile.
+            let userRes = await getProfile(accessTokenRes.access_token);
+
+            // Get approved bots.
+            let profile = userRes.data[0];
+            let twitchUser = getAuthenticatedTwitchUserId(request);
+
+            // Validate that the token being updated is owned by channel
+            if (twitchUser !== request.params.id || profile.id !== request.params.id) {
+                response.status(403);
+                return response.send("Invalid user");
+            }
+
             await Bots.findOneAndUpdate({twitchChannelId: request.params.id}, bot);
             response.status(204);
             return response.send();
