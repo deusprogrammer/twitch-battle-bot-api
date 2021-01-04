@@ -8,9 +8,37 @@ import {authenticatedUserHasRole, getAuthenticatedTwitchUserId} from '../utils/S
 
 const clientId = process.env.TWITCH_CLIENT_ID;
 const clientSecret = process.env.TWITCH_CLIENT_SECRET;
+const redirectUrl = "https://deusprogrammer.com/util/twitch/registration/refresh";
 
 const randomUuid = () => {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+const getAccessToken = async (code) => {
+    try {
+        let res = await axios.post(`https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&code=${code}&grant_type=authorization_code&redirect_uri=${redirectUrl}`);
+
+        return res.data;
+    } catch (error) {
+        console.error("Call to get access token failed! " + error.message);
+        throw error;
+    }
+}
+
+const getProfile = async (accessToken) => {
+    try {
+        let res = await axios.get(`https://api.twitch.tv/helix/users`, {
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Client-Id": clientId
+            }
+        });
+
+        return res.data;
+    } catch (error) {
+        console.error("Call to get profile failed! " + error.message);
+        throw error;
+    }
 }
 
 const validateAccessToken = async (accessToken) => {
@@ -137,6 +165,41 @@ router.route("/:id")
             console.error(error);
             response.status(500);
             return response.send(error);
+        }
+    })
+
+router.route("/:id/token")
+    .put(async (request, response) => {
+        // Get access token.
+        let accessTokenRes = await getAccessToken(request.body.twitchAuthCode);
+
+        // Get user profile.
+        let userRes = await getProfile(accessTokenRes.access_token);
+
+        // Get approved bots.
+        let profile = userRes.data[0];
+        let twitchUser = getAuthenticatedTwitchUserId(request);
+
+        // Validate that the token being updated is owned by channel
+        if (twitchUser !== request.params.id || profile.id !== request.params.id) {
+            response.status(403);
+            return response.send("Invalid user");
+        }
+
+        let bot = await Bots.findOne({twitchChannelId: request.params.id}).exec();
+        await Bots.findByIdAndUpdate(bot._id, bot);
+    })
+    .get(async (request, response) => {
+        let bot = await Bots.findOne({twitchChannelId: request.params.id}).exec();
+        
+        // Check auth token
+        try {
+            await validateAccessToken(bot.accessToken);
+        } catch (error) {
+            // Refresh token on failure to validate
+            let refresh = await refreshAccessToken(bot.refreshToken);
+            bot.accessToken = refresh.access_token;
+            await Bots.findByIdAndUpdate(bot._id, bot);
         }
     })
 
