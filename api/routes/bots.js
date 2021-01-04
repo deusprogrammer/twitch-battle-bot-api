@@ -16,10 +16,7 @@ const randomUuid = () => {
 
 const getAccessToken = async (code) => {
     try {
-        let url = `https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&code=${code}&grant_type=authorization_code&redirect_uri=${redirectUrl}`;
-        console.log("CONTACTING: " + url);
-        let res = await axios.post(url);
-
+        let res = await axios.post(`https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&code=${code}&grant_type=authorization_code&redirect_uri=${redirectUrl}`);
         return res.data;
     } catch (error) {
         console.error("Call to get access token failed! " + error.message);
@@ -189,7 +186,10 @@ router.route("/:id/token")
                 return response.send("Invalid user");
             }
 
-            await Bots.findOneAndUpdate({twitchChannelId: request.params.id}, bot);
+            let bot = await Bots.findOne({twitchChannelId: request.params.id}).exec();
+            bot.accessToken = accessTokenRes.access_token;
+            bot.refreshToken = accessTokenRes.refresh_token;
+            await Bots.findByIdAndUpdate(bot._id, bot);
             response.status(204);
             return response.send();
         } catch (error) {
