@@ -107,7 +107,7 @@ const deleteBotContainer = async (containerName) => {
     }
 }
 
-const createBotContainer = async (containerName) => {
+const createBotContainer = async (userId, containerName) => {
     const url = `http://10.0.0.243:2375/containers/create?name=${containerName}`;
     let res = await axios.post(url, {
         Image: "mmain/cbd-bot:latest",
@@ -314,7 +314,7 @@ router.route("/:id/state")
             // Stop, delete, rebuild container, and then start it to guarantee that it's always the newest version.
             await changeContainerState(`cbd-bot-${request.params.id}`, "stop");
             await deleteBotContainer(`cbd-bot-${request.params.id}`);
-            await createBotContainer(`cbd-bot-${request.params.id}`);
+            await createBotContainer(request.params.id, `cbd-bot-${request.params.id}`);
             await changeContainerState(`cbd-bot-${request.params.id}`, request.body.newState);
 
             return response.send();
