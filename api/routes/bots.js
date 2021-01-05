@@ -68,20 +68,43 @@ const getContainer = async (containerName) => {
 }
 
 const isContainerRunning = async (containerName) => {
-    let container = await getContainer(containerName);
-    return container.State.Running
+    try {
+        let container = await getContainer(containerName);
+        return container.State.Running;
+    } catch (error) {
+        if (error.response && error.response.status !== 404) {
+            throw error;
+        }
+        return false; 
+    }
 }
 
 const changeContainerState = async (containerName, state) => {
-    let res = await axios.post(`http://10.0.0.243:2375/containers/${containerName}/${state}`);
+    try {
+        let res = await axios.post(`http://10.0.0.243:2375/containers/${containerName}/${state}`);
 
-    return res.data;
+        return res.data;
+    } catch (error) {
+        if (error.response && error.response.status !== 404) {
+            throw error;
+        }
+
+        return {};
+    }
 }
 
 const deleteBotContainer = async (containerName) => {
-    let res = await axios.delete(`http://10.0.0.243:2375/containers/${containerName}`);
+    try {
+        let res = await axios.delete(`http://10.0.0.243:2375/containers/${containerName}`);
 
-    return res.data;
+        return res.data;
+    } catch (error) {
+        if (error.response && error.response.status !== 404) {
+            throw error;
+        } 
+
+        return {};
+    }
 }
 
 const createBotContainer = async (containerName) => {
