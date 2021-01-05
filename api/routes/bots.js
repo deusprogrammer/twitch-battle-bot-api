@@ -95,7 +95,7 @@ const changeContainerState = async (containerName, state) => {
 
 const deleteBotContainer = async (containerName) => {
     try {
-        let res = await axios.delete(`http://10.0.0.243:2375/containers/${containerName}`);
+        let res = await axios.delete(`http://10.0.0.243:2375/containers/${containerName}?force=true`);
 
         return res.data;
     } catch (error) {
@@ -312,10 +312,14 @@ router.route("/:id/state")
             // }
 
             // Stop, delete, rebuild container, and then start it to guarantee that it's always the newest version.
-            await changeContainerState(`cbd-bot-${request.params.id}`, "stop");
-            await deleteBotContainer(`cbd-bot-${request.params.id}`);
-            await createBotContainer(request.params.id, `cbd-bot-${request.params.id}`);
-            await changeContainerState(`cbd-bot-${request.params.id}`, request.body.newState);
+            
+            if (request.body.newState === "start" || request.body.newState === "restart") {
+                await deleteBotContainer(`cbd-bot-${request.params.id}`);
+                await createBotContainer(request.params.id, `cbd-bot-${request.params.id}`);
+                await changeContainerState(`cbd-bot-${request.params.id}`, "start");
+            } else if (request.body.newState === "stop") {
+                await deleteBotContainer(`cbd-bot-${request.params.id}`);
+            }
 
             return response.send();
         } catch (error) {
