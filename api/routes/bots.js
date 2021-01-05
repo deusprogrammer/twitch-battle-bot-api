@@ -281,12 +281,12 @@ router.route("/:id/state")
         }
         
         try {
-            let containerRunning = await isContainerRunning(`cbd-bot-${request.params.id}`);
+            // let containerRunning = await isContainerRunning(`cbd-bot-${request.params.id}`);
 
-            if (containerRunning && request.body.newState === "start") {
-                response.status(400);
-                return response.send("Container already running");
-            }
+            // if (containerRunning && request.body.newState === "start") {
+            //     response.status(400);
+            //     return response.send("Container already running");
+            // }
 
             // Stop, delete, rebuild container, and then start it to guarantee that it's always the newest version.
             await changeContainerState(`cbd-bot-${request.params.id}`, "stop");
@@ -301,6 +301,7 @@ router.route("/:id/state")
                 return response.send(error);
             } else {
                 response.status(500);
+                console.log("Failed to start container: " + error);
                 return response.send(error);
             }
         }
