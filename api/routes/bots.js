@@ -8,6 +8,11 @@ import {authenticatedUserHasRole, getAuthenticatedTwitchUserId} from '../utils/S
 
 const clientId = process.env.TWITCH_CLIENT_ID;
 const clientSecret = process.env.TWITCH_CLIENT_SECRET;
+const TWITCH_EXT_CLIENT_ID = process.env.TWITCH_EXT_CLIENT_ID;
+const TWITCH_BOT_CLIENT_ID = process.env.TWITCH_BOT_CLIENT_ID;
+const TWITCH_BOT_USER = process.env.TWITCH_BOT_USER;
+const TWITCH_BOT_PASS = process.env.TWITCH_BOT_PASS;
+const TWITCH_BOT_ACCESS_TOKEN = process.env.TWITCH_BOT_ACCESS_TOKEN;
 const redirectUrl = "https://deusprogrammer.com/util/twitch/registration/refresh";
 
 const randomUuid = () => {
@@ -69,6 +74,31 @@ const isContainerRunning = async (containerName) => {
 
 const changeContainerState = async (containerName, state) => {
     let res = await axios.post(`http://10.0.0.243:2375/containers/${containerName}/${state}`);
+
+    return res.data;
+}
+
+const deleteBotContainer = async (containerName) => {
+    let res = await axios.delete(`http://10.0.0.243:2375/containers/${containerName}`);
+
+    return res.data;
+}
+
+const createBotContainer = async (containerName) => {
+    const url = `http://10.0.0.243:2375/containers/create?name=${containerName}`;
+    let res = await axios.post(url, {
+        Image: "mmain/cbd-bot:latest",
+        Env: [
+            `TWITCH_EXT_CHANNEL_ID=${userId}`,
+            `TWITCH_EXT_CLIENT_ID=${TWITCH_EXT_CLIENT_ID}`,
+            `TWITCH_BOT_ACCESS_TOKEN=${TWITCH_BOT_ACCESS_TOKEN}`,
+            `TWITCH_BOT_USER=${TWITCH_BOT_USER}`,
+            `TWITCH_BOT_PASS=${TWITCH_BOT_PASS}`,
+            `TWITCH_BOT_CLIENT_ID=${TWITCH_BOT_CLIENT_ID}`,
+            "PROFILE_API_URL=https://deusprogrammer.com/api/profile-svc",
+            "BATTLE_API_URL=https://deusprogrammer.com/api/twitch"
+        ]
+    });
 
     return res.data;
 }
@@ -258,7 +288,12 @@ router.route("/:id/state")
                 return response.send("Container already running");
             }
 
+            // Stop, delete, rebuild container, and then start it to guarantee that it's always the newest version.
+            await changeContainerState(`cbd-bot-${request.params.id}`, "stop");
+            await deleteBotContainer(`cbd-bot-${request.params.id}`);
+            await createBotContainer(`cbd-bot-${request.params.id}`);
             await changeContainerState(`cbd-bot-${request.params.id}`, request.body.newState);
+
             return response.send();
         } catch (error) {
             if (error.response && error.response.state === 404) {
