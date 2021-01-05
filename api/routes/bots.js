@@ -304,15 +304,7 @@ router.route("/:id/state")
         }
         
         try {
-            // let containerRunning = await isContainerRunning(`cbd-bot-${request.params.id}`);
-
-            // if (containerRunning && request.body.newState === "start") {
-            //     response.status(400);
-            //     return response.send("Container already running");
-            // }
-
             // Stop, delete, rebuild container, and then start it to guarantee that it's always the newest version.
-            
             if (request.body.newState === "start" || request.body.newState === "restart") {
                 await deleteBotContainer(`cbd-bot-${request.params.id}`);
                 await createBotContainer(request.params.id, `cbd-bot-${request.params.id}`);
