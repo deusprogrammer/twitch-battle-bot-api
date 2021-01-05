@@ -257,11 +257,13 @@ router.route("/:id/token")
         // Check auth token
         try {
             await validateAccessToken(bot.accessToken);
+            return response.json({
+                valid: true
+            });
         } catch (error) {
-            // Refresh token on failure to validate
-            let refresh = await refreshAccessToken(bot.refreshToken);
-            bot.accessToken = refresh.access_token;
-            await Bots.findByIdAndUpdate(bot._id, bot);
+            return response.json({
+                valid: false
+            });
         }
     })
 
