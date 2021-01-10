@@ -28,7 +28,7 @@ router.route("/")
         }
 
         try {
-            let results = await Users.create(request.body).exec();
+            let results = await Users.create(request.body);
             return response.json(results);
         } catch (e) {
             console.error("ERROR IN CREATE: " + e.stack);
