@@ -46,6 +46,7 @@ router.route("/:id")
             userId = twitchUser;
         }
 
+        console.log(`${userId} vs ${twitchUser}`);
         
         if (twitchUser !== userId && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
             response.status(403);
