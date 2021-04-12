@@ -31,7 +31,8 @@ var botSchema = new mongoose.Schema({
         default: 0
     },
     config: {
-        type: Map
+        type: Map,
+        default: {}
     }
 })
 
