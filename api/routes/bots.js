@@ -221,6 +221,22 @@ router.route("/:id")
     })
 
 router.route("/:id/config")
+    .get(async (request, response) => {
+        let twitchUser = getAuthenticatedTwitchUserId(request);
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
+            response.status(403);
+            return response.send("Insufficient privileges");
+        }
+
+        try {
+            let bot = await Bots.findOne({twitchChannelId: request.params.id});
+            return response.json(bot.config);
+        } catch (error) {
+            console.error(error);
+            response.status(500);
+            return response.send(error);
+        }
+    })
     .put(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserId(request);
         if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
