@@ -32,7 +32,10 @@ var botSchema = new mongoose.Schema({
     },
     config: {
         type: Map,
-        default: {}
+        default: {
+            "cbd": true,
+            "requests": true
+        }
     }
 })
 
