@@ -220,6 +220,26 @@ router.route("/:id")
         }
     })
 
+router.route("/:id/config")
+    .put(async (request, response) => {
+        let twitchUser = getAuthenticatedTwitchUserId(request);
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
+            response.status(403);
+            return response.send("Insufficient privileges");
+        }
+
+        try {
+            let bot = await Bots.findOne({twitchChannelId: request.params.id});
+            bot.config = request.body;
+            await Bots.updateOne({twitchChannelId: request.params.id}, bot);
+            return response.json(bot);
+        } catch (error) {
+            console.error(error);
+            response.status(500);
+            return response.send(error);
+        }
+    })
+
 router.route("/:id/token")
     .put(async (request, response) => {
         try {

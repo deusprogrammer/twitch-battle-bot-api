@@ -29,6 +29,9 @@ var botSchema = new mongoose.Schema({
     priority: {
         type: Number,
         default: 0
+    },
+    config: {
+        type: Map
     }
 })
 
