@@ -44,7 +44,7 @@ router.route("/:id")
         }
 
         try {
-            let config = await Configs.findOneAndUpdate({name: request.params.id});
+            let config = await Configs.findOneAndUpdate({name: request.params.id}, request.body);
             return response.json(config);
         } catch (error) {
             console.error(error);
