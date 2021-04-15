@@ -177,7 +177,10 @@ router.route("/:id")
                 // Refresh token on failure to validate
                 let refresh = await refreshAccessToken(bot.refreshToken);
                 bot.accessToken = refresh.access_token;
+                bot.refreshToken = refresh.refresh_token;
                 await Bots.findByIdAndUpdate(bot._id, bot);
+                
+                console.log("REFRESHED TOKEN SUCCESSFULLY");
             }
             
             return response.json(bot);
