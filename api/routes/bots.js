@@ -174,6 +174,7 @@ router.route("/:id")
             try {
                 await validateAccessToken(bot.accessToken);
             } catch (error) {
+                console.error("STALE ACCESS TOKEN");
                 // Refresh token on failure to validate
                 let refresh = await refreshAccessToken(bot.refreshToken);
                 bot.accessToken = refresh.access_token;
