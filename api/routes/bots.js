@@ -57,10 +57,7 @@ const validateAccessToken = async (accessToken) => {
 
 const refreshAccessToken = async (refreshToken) => {
     let res = await axios.post(`https://id.twitch.tv/oauth2/token`, 
-        `?grant_type=refresh_token
-        &refresh_token=${encodeURIComponent(refreshToken)}
-        &client_id=${clientId}
-        &client_secret=${clientSecret}` , {
+        `?grant_type=refresh_token&refresh_token=${encodeURIComponent(refreshToken)}&client_id=${clientId}&client_secret=${clientSecret}` , {
         headers: {
             'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
         }
