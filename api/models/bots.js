@@ -39,12 +39,18 @@ var botSchema = new mongoose.Schema({
     },
     videoPool: {
         type: Array,
-        of: String,
+        of: {
+            url: String,
+            name: String
+        },
         default: []
     },
     audioPool: {
         type: Array,
-        of: String,
+        of: {
+            url: String,
+            name: String
+        },
         default: []
     }
 })
