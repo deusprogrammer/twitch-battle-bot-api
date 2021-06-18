@@ -391,7 +391,9 @@ router.route("/:id/state")
 router.route("/:id/media/:pool")
     .put(async (request, response) => {
         let twitchUser = getAuthenticatedTwitchUserId(request);
+        console.log(twitchUser + " === " + request.params.id + "?");
         if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
+            console.error("USER DOESN'T OWN CHANNEL OR HAVE ADMIN PRIVILEGES");
             response.status(403);
             return response.send("Insufficient privileges");
         }
