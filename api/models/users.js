@@ -39,7 +39,11 @@ var userSchema = new mongoose.Schema({
         type: Array,
         of: String
     },
-    gold: Number
+    gold: Number,
+    currencies: {
+        type: Map,
+        of: Number
+    }
 });
 
 module.exports = mongoose.model("users", userSchema);

@@ -65,4 +65,4 @@ app.use('/bots', passport.authenticate("jwt", { session: false }), botRoutes);
 app.use('/configs', passport.authenticate("jwt", { session: false }), configsRoutes);
 
 app.listen(port);
-console.log('budget RESTful API server started on: ' + port);
+console.log('CBD RESTful API server started on: ' + port);
