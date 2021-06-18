@@ -43,6 +43,10 @@ var userSchema = new mongoose.Schema({
     currencies: {
         type: Map,
         of: Number
+    },
+    currencies: {
+        type: Map,
+        of: Number
     }
 });
 
