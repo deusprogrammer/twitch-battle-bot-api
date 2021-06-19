@@ -10,6 +10,7 @@ export let jwtAuthStrategy = new jwtStrategy({
     try {
         return done(null, token.user);
     } catch (error) {
+        console.error("JWT failed: " + error);
         return done(error);
     }
 })
