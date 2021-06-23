@@ -40,7 +40,7 @@ connectWithRetry();
 
 passport.use(jwtAuthStrategy);
 
-app.use(bodyparser.json());
+app.use(express.json({limit: "50Mb"}))
 app.use(cors());
 app.use(passport.initialize());
 
