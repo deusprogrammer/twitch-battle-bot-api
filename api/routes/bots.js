@@ -14,6 +14,8 @@ const TWITCH_BOT_USER = process.env.TWITCH_BOT_USER;
 const TWITCH_BOT_PASS = process.env.TWITCH_BOT_PASS;
 const TWITCH_BOT_ACCESS_TOKEN = process.env.TWITCH_BOT_ACCESS_TOKEN;
 const TWITCH_BOT_JWT = process.env.TWITCH_BOT_JWT;
+const PROFILE_API_URL = process.env.PROFILE_API_URL;
+const BATTLE_API_URL = process.env.BATTLE_API_URL;
 const redirectUrl = "https://deusprogrammer.com/util/twitch/registration/refresh";
 
 const randomUuid = () => {
@@ -126,8 +128,8 @@ const createBotContainer = async (userId, containerName) => {
             `TWITCH_BOT_USER=${TWITCH_BOT_USER}`,
             `TWITCH_BOT_PASS=${TWITCH_BOT_PASS}`,
             `TWITCH_BOT_CLIENT_ID=${TWITCH_BOT_CLIENT_ID}`,
-            "PROFILE_API_URL=https://deusprogrammer.com/api/profile-svc",
-            "BATTLE_API_URL=https://deusprogrammer.com/api/twitch"
+            `PROFILE_API_URL=${PROFILE_API_URL}`,
+            `BATTLE_API_URL=${BATTLE_API_URL}`
         ]
     });
 
