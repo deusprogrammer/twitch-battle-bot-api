@@ -13,6 +13,7 @@ const TWITCH_BOT_CLIENT_ID = process.env.TWITCH_BOT_CLIENT_ID;
 const TWITCH_BOT_USER = process.env.TWITCH_BOT_USER;
 const TWITCH_BOT_PASS = process.env.TWITCH_BOT_PASS;
 const TWITCH_BOT_ACCESS_TOKEN = process.env.TWITCH_BOT_ACCESS_TOKEN;
+const TWITCH_BOT_JWT = process.env.TWITCH_BOT_JWT;
 const redirectUrl = "https://deusprogrammer.com/util/twitch/registration/refresh";
 
 const randomUuid = () => {
@@ -121,6 +122,7 @@ const createBotContainer = async (userId, containerName) => {
             `TWITCH_EXT_CHANNEL_ID=${userId}`,
             `TWITCH_EXT_CLIENT_ID=${TWITCH_EXT_CLIENT_ID}`,
             `TWITCH_BOT_ACCESS_TOKEN=${TWITCH_BOT_ACCESS_TOKEN}`,
+            `TWITCH_BOT_JWT=${TWITCH_BOT_JWT}`,
             `TWITCH_BOT_USER=${TWITCH_BOT_USER}`,
             `TWITCH_BOT_PASS=${TWITCH_BOT_PASS}`,
             `TWITCH_BOT_CLIENT_ID=${TWITCH_BOT_CLIENT_ID}`,
