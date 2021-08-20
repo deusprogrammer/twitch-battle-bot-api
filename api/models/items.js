@@ -50,6 +50,36 @@ var itemSchema = new mongoose.Schema({
             default: 0
         }
     },
+    resistances: {
+        fire: {
+            type: Number,
+            default: 1
+        },
+        ice: {
+            type: Number,
+            default: 1
+        },
+        lightning: {
+            type: Number, 
+            default: 1
+        },
+        water: {
+            type: Number,
+            default: 1
+        },
+        earth: {
+            type: Number,
+            default: 1
+        },
+        dark: {
+            type: Number,
+            default: 1
+        },
+        light: {
+            type: Number,
+            default: 1
+        }
+    },
     abilities: {
         type: Array,
         of: String,
