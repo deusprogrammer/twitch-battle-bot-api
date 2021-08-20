@@ -47,31 +47,31 @@ var monsterSchema = new mongoose.Schema({
     resistances: {
         fire: {
             type: Number,
-            default: 1
+            default: 0
         },
         ice: {
             type: Number,
-            default: 1
+            default: 0
         },
         lightning: {
             type: Number, 
-            default: 1
+            default: 0
         },
         water: {
             type: Number,
-            default: 1
+            default: 0
         },
         earth: {
             type: Number,
-            default: 1
+            default: 0
         },
         dark: {
             type: Number,
-            default: 1
+            default: 0
         },
         light: {
             type: Number,
-            default: 1
+            default: 0
         }
     },
     rarity: {
