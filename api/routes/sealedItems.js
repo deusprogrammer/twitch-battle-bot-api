@@ -49,7 +49,7 @@ router.route("/:id")
             }
 
             // Null out the code if not the broadcaster or bot
-            if (!authenticatedUserHasAccessToChannel(request, sealedItem.owningChannel) && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
+            if (!authenticatedUserHasAccessToChannel(request, results.owningChannel) && !authenticatedUserHasRole(request, "TWITCH_BOT")) {
                 results.code = null;
             }
 
