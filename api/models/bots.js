@@ -72,7 +72,7 @@ var botSchema = new mongoose.Schema({
             name: String,
             volume: {
                 type: Number,
-                default: 100
+                default: 1.0
             },
             x: {
                 type: String,
