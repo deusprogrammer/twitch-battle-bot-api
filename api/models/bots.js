@@ -1,5 +1,43 @@
 var mongoose = require('mongoose')
 
+var videoElementSchema = new mongoose.Schema({
+    url: String,
+    name: String,
+    chromaKey: {
+        type: String,
+        default: "green"
+    },
+    volume: {
+        type: Number,
+        default: 1.0
+    },
+    x: {
+        type: String,
+        default: "0px"
+    },
+    y: {
+        type: String,
+        default: "0px"
+    },
+    width: {
+        type: String,
+        default: "100vw"
+    },
+    height: {
+        type: String,
+        default: "100vh"
+    }
+});
+
+var audioElementSchema = new mongoose.Schema({
+    url: String,
+    name: String,
+    volume: {
+        type: Number,
+        default: 1.0
+    }
+});
+
 var botSchema = new mongoose.Schema({
     twitchChannel: {
         type: String,
@@ -38,59 +76,11 @@ var botSchema = new mongoose.Schema({
         }
     },
     videoPool: {
-        type: Array,
-        of: {
-            url: String,
-            name: String,
-            volume: {
-                type: Number,
-                default: 1.0
-            },
-            x: {
-                type: String,
-                default: "0px"
-            },
-            y: {
-                type: String,
-                default: "0px"
-            },
-            width: {
-                type: String,
-                default: "100vw"
-            },
-            height: {
-                type: String,
-                default: "100vh"
-            }
-        },
+        type: [videoElementSchema],
         default: []
     },
     audioPool: {
-        type: Array,
-        of: {
-            url: String,
-            name: String,
-            volume: {
-                type: Number,
-                default: 1.0
-            },
-            x: {
-                type: String,
-                default: "0px"
-            },
-            y: {
-                type: String,
-                default: "0px"
-            },
-            width: {
-                type: String,
-                default: "100vw"
-            },
-            height: {
-                type: String,
-                default: "100vh"
-            }
-        },
+        type: [audioElementSchema],
         default: []
     }
 })
