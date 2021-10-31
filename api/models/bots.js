@@ -68,6 +68,10 @@ var botSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    raidTheme: {
+        type: String,
+        default: "YOSHI"
+    },
     config: {
         type: Map,
         default: {
