@@ -165,7 +165,7 @@ router.route("/:id")
     router.route("/:id/changes")
         .post(async (request, response) => {
             let twitchUser = getAuthenticatedTwitchUserName(request);
-            let user = await Users.findOne({name: request.params.id});
+            let user = await Users.findOne({name: request.params.id}).lean();
 
             let changes = request.body;
             if (!Array.isArray(request.body)) {
@@ -218,13 +218,10 @@ router.route("/:id")
                             if (!currency) {
                                 user.inventory.push(id);
                             } else {
-                                // WHY DO I HAVE TO DO THIS?
-                                let currencies = JSON.parse(JSON.stringify(user.currencies, null, 5));
-                                if (!currencies[channel]) {
-                                    currencies[channel] = 0;
+                                if (!user.currencies[channel]) {
+                                    user.currencies[channel] = 0;
                                 }
-                                currencies[channel] += currency;
-                                user.currencies = currencies;
+                                user.currencies[channel] += currency;
                             }
                             break;
                         }
