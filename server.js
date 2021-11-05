@@ -1,6 +1,5 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import bodyparser from 'body-parser';
 import cors from 'cors';
 import passport from 'passport';
 
@@ -14,6 +13,7 @@ const statusRoutes = require('./api/routes/statuses');
 const botRoutes = require('./api/routes/bots');
 const sealedItemRoutes = require('./api/routes/sealedItems');
 const configsRoutes = require('./api/routes/configs');
+const raidConfigRoutes = require('./api/routes/raidConfigs');
 
 import {jwtAuthStrategy} from './api/config/passportConfig';
 
@@ -63,6 +63,7 @@ app.use('/abilities', passport.authenticate("jwt", { session: false }), abilityR
 app.use('/statuses', passport.authenticate("jwt", { session: false }), statusRoutes);
 app.use('/bots', passport.authenticate("jwt", { session: false }), botRoutes);
 app.use('/configs', passport.authenticate("jwt", { session: false }), configsRoutes);
+app.use('/raid-configs', passport.authenticate("jwt", { session: false }), raidConfigRoutes);
 
 app.listen(port);
 console.log('CBD RESTful API server started on: ' + port);

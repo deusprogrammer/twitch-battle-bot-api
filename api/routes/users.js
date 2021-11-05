@@ -161,4 +161,94 @@ router.route("/:id")
         }
     });
 
+    // Adjust values individually so we don't need to send huge structures back and forth
+    router.route("/:id/changes")
+        .post(async (request, response) => {
+            let twitchUser = getAuthenticatedTwitchUserName(request);
+            let user = await Users.findOne({name: request.params.id});
+
+            let changes = request.body;
+            if (!Array.isArray(request.body)) {
+                changes = [request.body];
+            }
+
+            for (const change of changes) {
+                let {type, id, adjustments, currency, channel} = change;
+                if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
+                    response.status(403);
+                    return response.send("Insufficient privileges");
+                }
+
+                try {
+                    if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
+                        if ((type === "equip" || type === "sell" && !user.inventory.contains(id))) {
+                            return response.status(400).send();
+                        } else if (type !== "equip" && type != "sell") {
+                            return response.status(400).send();
+                        }
+                    }
+
+                    let item;
+                    if (id) {
+                        item = await Items.findOne({id}).exec();
+
+                        if (!item) {
+                            return response.status(400).send();
+                        }
+                    }
+
+                    switch (type) {
+                        case "equip": {
+                            let prev = user.equipment[item.slot].id;
+                            user.equipment[item.slot].id = id;
+                            user.inventory.push(prev);
+                            user.inventory.remove(user.inventory.indexOf(id));
+                            break;
+                        }
+                        case "sell": {
+                            user.gold += item.value;
+                            user.inventory.remove(user.inventory.indexOf(id));
+                            break; 
+                        }
+                        case "remove": {
+                            user.inventory.remove(user.inventory.indexOf(id));
+                            break; 
+                        }
+                        case "give": {
+                            if (!currency) {
+                                user.inventory.push(id);
+                            } else {
+                                // WHY DO I HAVE TO DO THIS?
+                                let currencies = JSON.parse(JSON.stringify(user.currencies, null, 5));
+                                if (!currencies[channel]) {
+                                    currencies[channel] = 0;
+                                }
+                                currencies[channel] += currency;
+                                user.currencies = currencies;
+                            }
+                            break;
+                        }
+                        case "adjust": {
+                            Object.keys(adjustments).forEach((stat) => {
+                                if (["hp", "ap", "gold"].includes(stat)) {
+                                    user[stat] += adjustments[stat];
+                                }
+                            });
+                            break;
+                        }
+                        default: {
+                            return response.status(400).send();
+                        }
+                    }
+                } catch (e) {
+                    console.error("ERROR IN UPDATE: " + e.stack);
+                    response.status(500);
+                    return response.send(e);
+                }
+            }
+
+            let results = await Users.updateOne({name: request.params.id}, user);
+            return response.json(results);
+        });
+
 module.exports = router;
