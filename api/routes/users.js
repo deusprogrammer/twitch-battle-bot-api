@@ -202,16 +202,16 @@ router.route("/:id")
                             let prev = user.equipment[item.slot].id;
                             user.equipment[item.slot].id = id;
                             user.inventory.push(prev);
-                            user.inventory.remove(user.inventory.indexOf(id));
+                            user.inventory.splice(user.inventory.indexOf(id), 1);
                             break;
                         }
                         case "sell": {
                             user.gold += item.value;
-                            user.inventory.remove(user.inventory.indexOf(id));
+                            user.inventory.splice(user.inventory.indexOf(id), 1);
                             break; 
                         }
                         case "remove": {
-                            user.inventory.remove(user.inventory.indexOf(id));
+                            user.inventory.splice(user.inventory.indexOf(id), 1);
                             break; 
                         }
                         case "give": {
