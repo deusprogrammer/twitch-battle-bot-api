@@ -418,4 +418,25 @@ router.route("/:id/media/:pool")
         }
     })
 
+router.route("/:id/raid-config")
+    .put(async (request, response) => {
+        let twitchUser = getAuthenticatedTwitchUserId(request);
+        if (twitchUser !== request.params.id && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
+            console.error("USER DOESN'T OWN CHANNEL OR HAVE ADMIN PRIVILEGES");
+            response.status(403);
+            return response.send("Insufficient privileges");
+        }
+
+        try {
+            let bot = await Bots.findOne({twitchChannelId: request.params.id});
+            bot.raidConfig = request.body;
+            await Bots.updateOne({twitchChannelId: request.params.id}, bot);
+            return response.json(bot);
+        } catch (error) {
+            console.error(error);
+            response.status(500);
+            return response.send(error);
+        }
+    })
+
 module.exports = router;

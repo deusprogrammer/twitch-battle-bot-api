@@ -38,6 +38,14 @@ var audioElementSchema = new mongoose.Schema({
     }
 });
 
+var raidConfigSchema = new mongoose.Schema({
+    theme: {
+        type: String,
+        default: "YOSHI"
+    },
+    customId: String
+});
+
 var botSchema = new mongoose.Schema({
     twitchChannel: {
         type: String,
@@ -68,10 +76,7 @@ var botSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    raidTheme: {
-        type: String,
-        default: "YOSHI"
-    },
+    raidConfig: raidConfigSchema,
     config: {
         type: Map,
         default: {
