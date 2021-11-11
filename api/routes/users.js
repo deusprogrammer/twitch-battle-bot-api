@@ -199,10 +199,17 @@ router.route("/:id")
 
                     switch (type) {
                         case "equip": {
-                            let prev = user.equipment[item.slot].id;
-                            user.equipment[item.slot].id = id;
-                            user.inventory.push(prev);
+                            let prev = null;
+                            if (user.equipment[item.slot]) {
+                                prev = user.equipment[item.slot].id;
+                            }
+
+                            user.equipment[item.slot] = {id};
                             user.inventory.splice(user.inventory.indexOf(id), 1);
+
+                            if (prev) {
+                                user.inventory.push(prev);
+                            }
                             break;
                         }
                         case "unequip": {
