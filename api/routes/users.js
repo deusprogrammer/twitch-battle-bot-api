@@ -205,6 +205,12 @@ router.route("/:id")
                             user.inventory.splice(user.inventory.indexOf(id), 1);
                             break;
                         }
+                        case "unequip": {
+                            let prev = user.equipment[item.slot].id;
+                            delete user.equipment[item.slot];
+                            user.inventory.push(prev);
+                            break;
+                        }
                         case "sell": {
                             user.gold += item.value;
                             user.inventory.splice(user.inventory.indexOf(id), 1);
