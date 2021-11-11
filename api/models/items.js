@@ -85,6 +85,11 @@ var itemSchema = new mongoose.Schema({
         of: String,
         default: []
     },
+    unlocks: {
+        type: Array,
+        of: String,
+        default: []
+    },
     triggers: {
         type: Array,
         of: {
