@@ -180,7 +180,7 @@ router.route("/:id")
                 }
 
                 try {
-                    if (!authenticatedUserHasRole(request, "TWITCH_BOT") /*&& !authenticatedUserHasRole(request, "TWITCH_ADMIN")*/) {
+                    if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
                         if (["equip", "sell"].includes(type) && !user.inventory.includes(id)) {
                             return response.status(400).send();
                         } else if (!["equip", "unequip", "sell"].includes(type)) {
