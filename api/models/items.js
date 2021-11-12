@@ -6,9 +6,18 @@ var itemSchema = new mongoose.Schema({
         required: "Items must have an ID",
         unique: true
     },
-    type: String,
-    slot: String,
-    name: String,
+    type: {
+        type: String,
+        required: "Items must have a type"
+    },
+    slot: {
+        type: String,
+        required: "Items must have a slot"
+    },
+    name: {
+        type: String,
+        required: "Items must have a name"
+    },
     description: String,
     dungeon: {
         type: String,
