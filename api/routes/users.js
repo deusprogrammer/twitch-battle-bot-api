@@ -180,10 +180,10 @@ router.route("/:id")
                 }
 
                 try {
-                    if (!authenticatedUserHasRole(request, "TWITCH_BOT") && !authenticatedUserHasRole(request, "TWITCH_ADMIN")) {
-                        if ((type === "equip" || type === "sell" && !user.inventory.contains(id))) {
+                    if (!authenticatedUserHasRole(request, "TWITCH_BOT") /*&& !authenticatedUserHasRole(request, "TWITCH_ADMIN")*/) {
+                        if (["equip", "sell"].includes(type) && !user.inventory.contains(id)) {
                             return response.status(400).send();
-                        } else if (type !== "equip" && type != "sell") {
+                        } else if (!["equip", "unequip", "sell"].includes(type)) {
                             return response.status(400).send();
                         }
                     }
@@ -199,6 +199,10 @@ router.route("/:id")
 
                     switch (type) {
                         case "equip": {
+                            if (!["HAND", "HEAD", "ARMS", "BODY", "LEGS", "ACCESSORY"].includes(item.slot.toUpperCase())) {
+                                return response.status(400).send();
+                            }
+
                             let prev = null;
                             if (user.equipment[item.slot]) {
                                 prev = user.equipment[item.slot].id;
