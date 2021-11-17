@@ -7,7 +7,8 @@ const spriteSchema = new mongoose.Schema({
     endFrame: Number,
     frameWidth: Number,
     frameHeight: Number,
-    frameRate: Number
+    frameRate: Number,
+    cellCount: Number
 });
 
 const soundSchema = new mongoose.Schema({
