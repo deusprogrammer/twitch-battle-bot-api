@@ -1,6 +1,10 @@
 var mongoose = require('mongoose')
 
 var videoElementSchema = new mongoose.Schema({
+    enabled: {
+        type: Boolean,
+        default: true
+    },
     url: String,
     name: String,
     chromaKey: {
@@ -30,6 +34,10 @@ var videoElementSchema = new mongoose.Schema({
 });
 
 var audioElementSchema = new mongoose.Schema({
+    enabled: {
+        type: Boolean,
+        default: true
+    },
     url: String,
     name: String,
     volume: {
@@ -38,13 +46,22 @@ var audioElementSchema = new mongoose.Schema({
     }
 });
 
-var raidConfigSchema = new mongoose.Schema({
-    theme: {
-        type: String,
-        default: "YOSHI"
+var alertConfigSchema = new mongoose.Schema({
+    enabled: {
+        type: Boolean,
+        default: false
     },
-    customId: String
+    type: String,
+    name: String,
+    messageTemplate: String,
+    id: String
 });
+
+var commandSchema = new mongoose.Schema({
+    coolDown: String,
+    type: String,
+    target: String
+})
 
 var botSchema = new mongoose.Schema({
     twitchChannel: {
@@ -76,7 +93,6 @@ var botSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    raidConfig: raidConfigSchema,
     config: {
         type: Map,
         default: {
@@ -85,6 +101,16 @@ var botSchema = new mongoose.Schema({
             "raid": false,
             "rewards": false
         }
+    },
+    commands: {
+        type: Map,
+        of: commandSchema
+    },
+    alertConfigs: {
+        subAlert: alertConfigSchema,
+        raidAlert: alertConfigSchema,
+        cheerAlert: alertConfigSchema,
+        followAlert: alertConfigSchema
     },
     videoPool: {
         type: [videoElementSchema],
