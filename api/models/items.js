@@ -22,6 +22,10 @@ var itemSchema = new mongoose.Schema({
     dungeon: {
         type: String,
         default: "GENERIC"
+    },    
+    imageUrl: {
+        type: String,
+        default: null
     },
     use: String,
     dmg: String,
