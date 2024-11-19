@@ -20,6 +20,10 @@ var monsterSchema = new mongoose.Schema({
     ac: Number,
     dmg: String,
     hit: Number,
+    imageUrl: {
+        type: String,
+        default: null
+    },
     actions: {
         type: Array,
         of: {

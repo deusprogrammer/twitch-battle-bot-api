@@ -6,6 +6,7 @@ import {authenticatedUserHasRole, authenticatedUserHasAccessToChannel} from '../
 
 router.route("/")
     .get((request, response) => {
+        // TODO Figure out why this returns a 200 even when it fails.
         SealedItems.find(request.query, null, {sort: {name: 1}}, (error, results) => {
             if (error) {
                 return response.send(error);
@@ -46,6 +47,11 @@ router.route("/:id")
         SealedItems.findOne(search, (error, results) => {
             if (error) {
                 return response.send(error);
+            }
+
+            if (!results) {
+                response.statusCode = 404;
+                return response.send();
             }
 
             // Null out the code if not the broadcaster or bot
