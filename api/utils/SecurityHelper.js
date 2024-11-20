@@ -16,6 +16,7 @@ export let getAuthenticatedTwitchUserId = (request) => {
 
 export let authenticatedUserHasRole = (request, role) => {
     if (request.user.roles) {
+        console.log("ROLES: " + JSON.stringify(request.user.roles));
         return request.user.roles.includes(role);
     }
     
